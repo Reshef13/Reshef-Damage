@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reshef | The Damage being counted on the stairs</title>
+    <title>Reshef - First Album</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Hebrew:wght@100..900&display=swap" rel="stylesheet">
@@ -282,7 +282,7 @@
     <div id="interaction-prompt">הקלק להחלפה | הטה ימינה או שמאלה</div>
 
     <!-- AUDIO ELEMENTS -->
-    <audio id="audio-state-0" src="audio_idle.mp3" loop preload="auto"></audio>
+    <!-- REMOVED IDLE AND LOGO AUDIO FOR SILENCE -->
     <audio id="audio-state-1" src="audio_feed.mp3" loop preload="auto"></audio>
     <audio id="audio-state-2" src="audio_portrait.mp3" loop preload="auto"></audio> 
     <audio id="audio-state-3" src="audio_connection.mp3" loop preload="auto"></audio>
@@ -293,7 +293,6 @@
     <audio id="audio-state-8" src="audio_nostalgia.mp3" loop preload="auto"></audio>
     <audio id="audio-state-9" src="audio_dibuk.mp3" loop preload="auto"></audio>
     <audio id="audio-state-10" src="audio_time.mp3" loop preload="auto"></audio>
-    <audio id="audio-state-11" src="audio_idle.mp3" loop preload="auto"></audio> 
 
 
     <!-- Libraries -->
@@ -427,9 +426,16 @@
         let audioInitialized = false; 
 
         // --- AUDIO SETUP ---
+        // Logic modified to allow skipping indices 0 and 11
         const audioElements = [];
         for(let i=0; i<=11; i++) {
-            audioElements.push(document.getElementById(`audio-state-${i}`));
+            // Check if element exists before adding (since 0 and 11 are gone)
+            const el = document.getElementById(`audio-state-${i}`);
+            if(el) {
+                audioElements[i] = el; // Maintain index position
+            } else {
+                audioElements[i] = null; // Placeholder for 0 and 11
+            }
         }
 
         // --- SCENE SETUP ---
@@ -701,7 +707,7 @@
                 vec3 posComposite;
                 if (aRandom > 0.7) { // 30% for text
                     posComposite = posLogo * 0.35; // Scale down text
-                    posComposite.y += 0.5; // Centered
+                    posComposite.y += 0.5; // NEW: Centered (slightly up to clear floor)
                     // No rotation
                 } else { // 70% for stairs
                     posComposite = posStairs;
@@ -740,6 +746,7 @@
                 else if (t < 11.0) {
                     float p = t - 10.0;
                     if (p < 0.5) {
+                        // IMPLOSION
                         float prog = p / 0.5; 
                         float easeIn = prog * prog * prog; 
                         float radius = (1.0 - easeIn) * 5.0;
@@ -747,6 +754,7 @@
                         vec3 centerSwirl = vec3(cos(angle) * radius, (aRandom - 0.5) * radius * 0.5, sin(angle) * radius);
                         finalPos = mix(posHourglass, centerSwirl, easeIn);
                     } else {
+                        // EXPLOSION
                         float prog = (p - 0.5) / 0.5; 
                         float easeOut = 1.0 - pow(1.0 - prog, 5.0);
                         vec3 randomFlight = aRandomVec * (1.0 - easeOut) * 10.0; 
@@ -938,8 +946,6 @@
         composer.addPass(bloomPass);
 
         // --- EVENTS & INTERACTION ---
-        // const mouse = new THREE.Vector2(); // REMOVED to prevent re-declaration
-        // const targetMouse = new THREE.Vector2(); // REMOVED to prevent re-declaration
         const windowHalfX = window.innerWidth / 2;
         const windowHalfY = window.innerHeight / 2;
 
@@ -968,15 +974,17 @@
 
         function initializeAudio() {
             if (audioInitialized) return;
-            const firstAudio = audioElements[currentStateIndex];
-            if(firstAudio) {
-                firstAudio.play().then(() => {
-                    audioInitialized = true;
-                    console.log("Audio playing: " + firstAudio.src);
-                }).catch(e => {
-                    console.log("Audio awaiting interaction or file not found (Expected in preview).");
-                    audioInitialized = true; 
-                });
+            
+            // Audio initialization logic needs user interaction.
+            // We assume the first click/scroll will be used to start playing
+            // audio for the *next* state if it's not silent.
+            
+            audioInitialized = true; // Mark as initialized so we don't try again
+            
+            // Try to play the current state's audio if it exists and is not null
+            const currentAudio = audioElements[currentStateIndex];
+            if (currentAudio) {
+                currentAudio.play().catch(e => console.log("Audio play failed (expected if silent):", e));
             }
         }
 
@@ -997,10 +1005,15 @@
                 prevAudio.pause();
                 prevAudio.currentTime = 0;
             }
-            const newAudio = audioElements[index];
-            if(newAudio) {
-                newAudio.play().catch(e => console.log("Waiting for interaction/file"));
+            
+            // Skip playing audio for index 0 and 11
+            if (index !== 0 && index !== 11) {
+                const newAudio = audioElements[index];
+                if(newAudio) {
+                    newAudio.play().catch(e => console.log("Waiting for interaction/file"));
+                }
             }
+            
             previousStateIndex = index;
 
             // Fade out text
@@ -1087,8 +1100,6 @@
             }
         });
 
-        // const clock = new THREE.Clock(); // REMOVED to prevent re-declaration
-        
         const fpsElem = document.getElementById('fps');
         const tokenElem = document.getElementById('token-count');
         const coordXElem = document.getElementById('coord-x');
