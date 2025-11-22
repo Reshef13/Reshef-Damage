@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Latent Ghost | Machine Consciousness</title>
+    <title>Reshef | The Damage being counted on the stairs</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Hebrew:wght@100..900&display=swap" rel="stylesheet">
@@ -169,6 +169,48 @@
             text-transform: uppercase;
         }
 
+        /* SOCIAL LINKS STYLES */
+        #social-links {
+            position: fixed;
+            bottom: 40px; /* Positioned at bottom */
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none; /* Hidden by default */
+            transition: opacity 1s ease;
+        }
+
+        #social-links.visible {
+            opacity: 1;
+            pointer-events: auto; /* Enable clicking when visible */
+        }
+
+        .social-icon {
+            display: block;
+            width: 40px;
+            height: 40px;
+            transition: transform 0.2s ease, filter 0.2s ease;
+            cursor: pointer;
+        }
+
+        .social-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: rgba(255, 255, 255, 0.8);
+        }
+
+        .social-icon:hover {
+            transform: scale(1.2);
+        }
+
+        .social-icon:hover svg {
+            fill: #ffffff;
+            filter: drop-shadow(0 0 5px #ffffff);
+        }
+
         @keyframes pulse {
             0% { opacity: 0.2; }
             50% { opacity: 0.8; }
@@ -199,9 +241,26 @@
 
     <div id="ui-layer">
         <div class="narrative-container" id="text-content">
-            <h1 class="glitch" data-text="רשף">רשף</h1>
-            <p> את הנזק סופרים במדרגות</p>
+            <!-- EMPTY FOR SLIDE 0, POPULATED FOR OTHERS -->
+            <h1 class="glitch" data-text=""></h1>
+            <p></p>
         </div>
+    </div>
+
+    <!-- SOCIAL LINKS CONTAINER (Hidden until last slide) -->
+    <div id="social-links">
+        <!-- Spotify -->
+        <a href="https://open.spotify.com/artist/1AY806UcdOkF9pizbtZ1BM?si=GYdvWezBTi21zAsGovT4rQ" target="_blank" class="social-icon" title="Spotify">
+            <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.4-1.02 15.96 1.681.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        </a>
+        <!-- YouTube -->
+        <a href="https://www.youtube.com/@resheftr" target="_blank" class="social-icon" title="YouTube">
+            <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.498-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </a>
+        <!-- Apple Music -->
+        <a href="https://music.apple.com/us/artist/%D7%A8%D7%A9%D7%A3/1818649072" target="_blank" class="social-icon" title="Apple Music">
+            <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm4.925 16.734c-.364.391-1.203.446-1.203.446s-1.341.055-2.625-.948c-1.283-1.004-2.531-1.116-2.531-1.116s-.837-.168-1.424 1.284c-.586 1.451-2.179 4.019-2.179 4.019s-1.006 1.73-2.709.726c-1.229-.726-.726-2.401-.726-2.401s1.285-3.684 2.233-5.415c.949-1.73 2.01-4.019 2.01-4.019s.671-1.619 2.513-1.396c1.843.223 5.193 2.345 5.807 4.076.615 1.731 1.199 4.353.834 4.744zM15.14 9.027c-.615-1.116-2.233-1.898-2.233-1.898s-1.563-.558-2.122.446c-.558 1.005-.335 2.289-.335 2.289s.223 1.507 2.01 2.121c1.787.614 2.848-.67 2.848-.67s.446-1.172-.168-2.288z"/></svg>
+        </a>
     </div>
 
     <div class="hud hud-tl">
@@ -220,7 +279,7 @@
         STATE: <span id="system-state">רשף</span>
     </div>
 
-    <div id="interaction-prompt">Click to Mutate | Scroll to Traverse</div>
+    <div id="interaction-prompt">הקלק להחלפה | הטה ימינה או שמאלה</div>
 
     <!-- AUDIO ELEMENTS -->
     <audio id="audio-state-0" src="audio_idle.mp3" loop preload="auto"></audio>
@@ -253,6 +312,11 @@
     <script>
     window.onload = function() {
 
+        // DEFINE GLOBAL VARIABLES AT TOP OF SCOPE TO AVOID REFERENCE ERRORS
+        const mouse = new THREE.Vector2();
+        const targetMouse = new THREE.Vector2();
+        const clock = new THREE.Clock();
+
         /**
          * THE LATENT GHOST
          * A visualization of AI consciousness.
@@ -273,22 +337,22 @@
         const STATES = [
             { // 0
                 name: "IDLE",
-                title: "רשף",
-                text: "את הנזק סופרים במדרגות",
-                color: new THREE.Vector3(0.8, 0.0, 0.0), // Red
-                shape: 0.0 // Stairs
+                title: "", // HIDDEN - Handled by particles
+                text: "",  // HIDDEN - Handled by particles
+                color: new THREE.Vector3(0.9, 0.9, 0.9), // White/Grey
+                shape: 0.0 // Composite: Stairs + Small Text
             },
             { // 1
                 name: "FEED",
                 title: "תאכיל אותי עוד",
-                text: "תאכיל אותי עוד", 
+                text: "על נשמה אפשר לקעקע המון, תן לי אוכל תאכיל אותי עוד", 
                 color: new THREE.Vector3(0.9, 0.9, 0.9), // White/Grey
                 shape: 1.0 // Fruit Ninja Rain
             },
             { // 2
                 name: "FUELING",
                 title: "בנזין",
-                text: "אני מסניף את ריח לא יכול להפסיק",
+                text: "אהבה זה משוגע אני ניצוץ ואת שלהבת",
                 color: new THREE.Vector3(0.9, 0.9, 0.9), // White/Grey
                 shape: 2.0 // Falling Star (Shooting Star)
             },
@@ -302,9 +366,9 @@
             { // 4
                 name: "IDLE",
                 title: "המרוץ",
-                text: "אולי זה לא העשור שלי ואין לי כל כך מה להגיד, בתרבות הזו בשטות הזו",
+                text: "מדליית זהב שווה הרבה כסף, הרבה כסף לא מרגיש זהב, אולי עדיף לחזור לג'ונגל",
                 color: new THREE.Vector3(0.8, 0.0, 0.0), // Red
-                shape: 4.0 // Finish Line
+                shape: 4.0 // Giant Snake
             },
             { // 5
                 name: "DAMAGE",
@@ -348,10 +412,10 @@
                 color: new THREE.Vector3(0.5, 0.5, 0.5), // Grey
                 shape: 10.0 // Hourglass
             },
-            { // 11 - NEW LOGO STATE
+            { // 11 - NEW LOGO STATE (TEXT PARTICLES)
                 name: "LOGO",
-                title: "רשף",
-                text: "החותם הסופי",
+                title: "", // Hidden
+                text: "",  // Hidden
                 color: new THREE.Vector3(1.0, 1.0, 1.0), // White
                 shape: 11.0 // Logo Image
             }
@@ -461,6 +525,12 @@
                 vec3 pos = position;
                 
                 // --- SHAPES DEFINITIONS ---
+                
+                // LOGO / TEXT (Shared for Index 0 & 11)
+                vec3 posLogo = aLogoPos;
+                posLogo.y += sin(uTime * 0.5 + aRandom * 10.0) * 0.1;
+                // No rotation for text to keep it legible
+                // posLogo = rotateX(-0.1) * posLogo; 
 
                 // FINISH LINE (Used for Index 4)
                 vec3 posFinishLine;
@@ -501,43 +571,28 @@
 
                 // FUEL (Falling Star)
                 vec3 posFuel;
-                
-                // Trajectory parameters
                 float starSpeed = 8.0;
-                float pathPos = mod(uTime * starSpeed, 40.0) - 20.0; // Move from -20 to 20
-                vec3 dir = normalize(vec3(1.5, -0.8, 0.5)); // Diagonal down-right-forward
+                float pathPos = mod(uTime * starSpeed, 40.0) - 20.0;
+                vec3 dir = normalize(vec3(1.5, -0.8, 0.5));
                 vec3 headPos = dir * pathPos;
-                
                 if (aRandom < 0.05) {
-                    // Star Head (Dense, bright nucleus)
-                    vec3 local = normalize(aRandomVec) * (aRandom * 0.5); // Small sphere
+                    vec3 local = normalize(aRandomVec) * (aRandom * 0.5);
                     posFuel = headPos + local;
                 } else {
-                    // Star Tail
-                    // Distribution along tail
-                    float t = (aRandom - 0.05) / 0.95; // 0 to 1
-                    // Exponential distribution for density near head
+                    float t = (aRandom - 0.05) / 0.95;
                     t = pow(t, 0.5); 
-                    
                     float tailLen = 15.0;
                     vec3 tailBase = headPos - (dir * t * tailLen);
-                    
-                    // Spread increases with distance from head
-                    float spread = t * 1.5; // Cone shape
-                    // Add turbulence
+                    float spread = t * 1.5;
                     vec3 noise = aRandomVec; 
-                    // Make it look like trailing smoke/fire
                     noise.y += sin(t * 10.0 - uTime * 5.0) * 0.5;
-                    
                     posFuel = tailBase + noise * spread;
                 }
 
-                // FRUIT NINJA RAIN (Replaces Plate for Index 1)
+                // FRUIT NINJA RAIN
                 vec3 posPlate; 
                 float rainType = aRandom; 
-                
                 if (rainType < 0.8) {
-                    // FRUITS (80%)
                     float fruitID = floor(aRandom * 100.0);
                     float fRand = fract(fruitID * 13.37);
                     float fallSpeed = 3.0 + fRand * 4.0;
@@ -552,7 +607,6 @@
                     mat3 rotFruit = rotateZ(rotT * (fRand - 0.5) * 2.0) * rotateX(rotT * (fRand - 0.5) * 2.0);
                     posPlate = fruitCenter + (rotFruit * local);
                 } else {
-                    // SLICES / JUICE (20%)
                     float sliceID = floor(aRandom * 20.0);
                     float sRand = fract(sliceID * 7.77);
                     float angle = sRand * 3.14159 * 2.0;
@@ -561,55 +615,33 @@
                     float dist = mod(uTime * speed + sRand * 50.0, 20.0);
                     vec3 start = vec3((sRand - 0.5) * 10.0, 5.0, (fract(sRand*10.0)-0.5)*5.0);
                     posPlate = start + dir * dist;
-                    if(posPlate.y < -6.0) posPlate.y += 20.0; // Visual recycling
+                    if(posPlate.y < -6.0) posPlate.y += 20.0; 
                 }
 
-                // CRUMPLED NOTE (for Index 6)
+                // CRUMPLED NOTE
                 vec3 posNote = pos;
-                // Flatten to sheet
                 posNote.y *= 0.05; 
-                posNote.x *= 1.2; // Wider
-                // Crumple animation
-                float crumpleCycle = (sin(uTime * 1.0) + 1.0) * 0.5; // 0 to 1
+                posNote.x *= 1.2;
+                float crumpleCycle = (sin(uTime * 1.0) + 1.0) * 0.5;
                 float noteNoise = snoise(pos * 0.8);
-                // Move towards center + noise
                 vec3 center = vec3(0.0);
                 vec3 crumpledState = normalize(posNote) * (length(posNote) * 0.2) + vec3(noteNoise * 0.5);
                 posNote = mix(posNote, crumpledState, crumpleCycle * 0.9);
-                // Rotate
                 posNote = rotateZ(uTime * 0.1) * rotateX(0.5) * posNote;
 
 
-                // EQUALIZER (for Index 7 - PROCESSING) - Was Lion
+                // EQUALIZER
                 vec3 posEqualizer;
-                // Define number of bars
                 float numBars = 20.0;
-                // Calculate which bar this particle belongs to based on its random seed
                 float barIndex = floor(aRandom * numBars);
-                // Normalize bar index to -1.0 to 1.0 range for positioning
                 float xPos = (barIndex / (numBars - 1.0)) * 10.0 - 5.0;
-                
-                // Calculate height factor for this bar based on time and index (simulating audio)
-                // We use uTime * speed + barIndex to create a wave offset
                 float timeFactor = uTime * 5.0 + barIndex * 0.5;
-                // Use noise or sin for height fluctuation. Absolute value for positive height.
-                // Combine multiple sin waves for more random-looking "music"
                 float barHeight = abs(sin(timeFactor) * 2.0 + sin(timeFactor * 2.3) * 1.0);
-                // Clamp minimum height so bars don't disappear completely
                 barHeight = max(barHeight, 0.2);
-                
-                // Vertical position within the bar based on another random factor
-                // Use aRandomVec.y which is -0.5 to 0.5, remap to 0 to 1
                 float yFactor = (aRandomVec.y + 0.5);
-                // Scale by bar height. Center vertically or align to bottom? 
-                // Let's align to bottom (y = -2.0)
-                float yPos = -2.0 + yFactor * barHeight * 2.0; // *2.0 for visual scale
-                
-                // Z position - give the bars some depth
-                float zPos = aRandomVec.z * 0.5; // Flat-ish bars
-                
+                float yPos = -2.0 + yFactor * barHeight * 2.0; 
+                float zPos = aRandomVec.z * 0.5; 
                 posEqualizer = vec3(xPos, yPos, zPos);
-                // Slight rotation to make it 3D interesting
                 posEqualizer = rotateX(-0.2) * posEqualizer;
                 
                 
@@ -649,9 +681,32 @@
                 posBlackHole.y = -2.0 / bhRadius;
                 posBlackHole = rotateX(1.0) * posBlackHole;
 
-                // LOGO (Index 11)
-                // No motion, pure static position from attribute
-                vec3 posLogo = aLogoPos;
+                // GIANT SNAKE (Index 4)
+                vec3 posSnake;
+                float snT = aRandom; 
+                float snLen = 25.0;  
+                float snX = (snT - 0.5) * snLen; 
+                float snTime = uTime * 2.0; 
+                float snY = sin(snX * 0.4 + snTime) * 2.0 + sin(snX * 1.5 + snTime * 2.0) * 0.5;
+                float snZ = cos(snX * 0.3 + snTime * 0.8) * 3.0;
+                vec3 snSpine = vec3(snX, snY, snZ);
+                vec3 snBody = normalize(aRandomVec) * 0.8; 
+                if (snT > 0.97) snBody *= 2.5; 
+                else if (snT < 0.05) snBody *= 0.2; 
+                posSnake = snSpine + snBody;
+                posSnake = rotateZ(0.2) * rotateX(0.3) * posSnake;
+
+
+                // --- COMPOSITE SHAPE FOR SLIDE 0 ---
+                vec3 posComposite;
+                if (aRandom > 0.7) { // 30% for text
+                    posComposite = posLogo * 0.35; // Scale down text
+                    posComposite.y += 0.5; // Centered
+                    // No rotation
+                } else { // 70% for stairs
+                    posComposite = posStairs;
+                    posComposite.y -= 1.0; // Shift stairs down
+                }
 
 
                 // --- MORPHING LOGIC ---
@@ -659,16 +714,16 @@
                 vec3 finalPos = pos;
                 float t = uShape;
                 
-                // 0: IDLE(Stairs) -> 1: FEED(Fruit Rain)
-                if (t < 1.0) finalPos = mix(posStairs, posPlate, t);
+                // 0: IDLE(Composite) -> 1: FEED(Fruit Rain)
+                if (t < 1.0) finalPos = mix(posComposite, posPlate, t);
                 // 1: FEED(Fruit Rain) -> 2: FUELING(City)
                 else if (t < 2.0) finalPos = mix(posPlate, posFuel, t - 1.0);
                 // 2: FUELING(City) -> 3: CONNECTION(Cube)
                 else if (t < 3.0) finalPos = mix(posFuel, posCube, t - 2.0);
-                // 3: CONNECTION(Cube) -> 4: IDLE(FinishLine)
-                else if (t < 4.0) finalPos = mix(posCube, posFinishLine, t - 3.0);
-                // 4: IDLE(FinishLine) -> 5: DAMAGE(Stairs)
-                else if (t < 5.0) finalPos = mix(posFinishLine, posStairs, t - 4.0);
+                // 3: CONNECTION(Cube) -> 4: IDLE(Snake)
+                else if (t < 4.0) finalPos = mix(posCube, posSnake, t - 3.0);
+                // 4: IDLE(Snake) -> 5: DAMAGE(Stairs)
+                else if (t < 5.0) finalPos = mix(posSnake, posStairs, t - 4.0);
                 // 5: DAMAGE(Stairs) -> 6: HALLUCINATION(Crumpled Note)
                 else if (t < 6.0) finalPos = mix(posStairs, posNote, t - 5.0);
                 // 6: HALLUCINATION(Crumpled Note) -> 7: PROCESSING(Equalizer)
@@ -681,43 +736,26 @@
                 else if (t < 10.0) finalPos = mix(posTree, posHourglass, t - 9.0);
                 
                 // 10: TIME(Hourglass) -> 11: LOGO(Image)
-                // "BIG BANG" transition: Implode to swirl, then explode to Logo
+                // "BIG BANG" transition
                 else if (t < 11.0) {
                     float p = t - 10.0;
-                    
                     if (p < 0.5) {
-                        // IMPLOSION (0.0 to 0.5)
                         float prog = p / 0.5; 
-                        // Accelerate in
                         float easeIn = prog * prog * prog; 
-                        
-                        // Swirl radius decreases
                         float radius = (1.0 - easeIn) * 5.0;
                         float angle = prog * 20.0 + aRandom * 10.0;
-                        
-                        vec3 centerSwirl = vec3(
-                            cos(angle) * radius, 
-                            (aRandom - 0.5) * radius * 0.5, 
-                            sin(angle) * radius
-                        );
-                        
-                        // Mix current hourglass pos towards this swirling center
+                        vec3 centerSwirl = vec3(cos(angle) * radius, (aRandom - 0.5) * radius * 0.5, sin(angle) * radius);
                         finalPos = mix(posHourglass, centerSwirl, easeIn);
                     } else {
-                        // EXPLOSION (0.5 to 1.0)
                         float prog = (p - 0.5) / 0.5; 
-                        // Decelerate out (Snap)
                         float easeOut = 1.0 - pow(1.0 - prog, 5.0);
-                        
-                        // Add randomness to the flight path
                         vec3 randomFlight = aRandomVec * (1.0 - easeOut) * 10.0; 
-                        
                         finalPos = mix(vec3(0.0), posLogo, easeOut) + randomFlight;
                     }
                 }
                 
-                // 11: LOGO(Image) -> 0: IDLE(Stairs) [WRAP]
-                else finalPos = mix(posLogo, posStairs, t - 11.0);
+                // 11: LOGO -> 0: IDLE(Composite) [WRAP]
+                else finalPos = mix(posLogo, posComposite, t - 11.0);
 
                 // Add noise displacement
                 float noiseVal = snoise(finalPos * 0.5 + uTime * 0.2);
@@ -734,12 +772,24 @@
                 
                 gl_PointSize = (10.0 * aRandom + 2.0) * (1.0 / -mvPosition.z);
                 
+                // FLICKER EFFECT FOR SUBTITLE IN SLIDE 0
+                bool isSlideZero = (uShape < 0.5 || uShape > 11.5);
+
+                if (isSlideZero) {
+                    // Check if particle belongs to text group (>0.7) AND is in lower part (subtitle)
+                    if (aRandom > 0.7 && aLogoPos.y < -0.1) {
+                        float flickerSpeed = 15.0;
+                        float noise = fract(sin(dot(vec2(aRandom, uTime * flickerSpeed), vec2(12.9898, 78.233))) * 43758.5453);
+                        float burst = sin(uTime * 2.0);
+                        if (burst > 0.0 && noise < 0.4) {
+                            gl_PointSize = 0.0;
+                        }
+                    }
+                }
+                
                 vDist = distance(finalPos, vec3(0.0));
                 vColor = mix(vec3(0.1, 0.1, 0.1), vec3(1.0), aRandom);
                 
-                // Remove custom color mix for Hallucination to respect global color setting
-                // float hFactor = max(0.0, 1.0 - abs(uShape - 6.0)); ...
-                // vColor = baseColor; (Default behavior)
             }
         `;
 
@@ -809,58 +859,68 @@
         const particles = new THREE.Points(geometry, material);
         scene.add(particles);
 
-        // --- LOGO IMAGE LOADING LOGIC ---
-        const img = new Image();
-        img.crossOrigin = "Anonymous"; 
-        img.onload = function() {
+        // --- DYNAMIC TEXT GENERATION FOR LOGO ---
+        function generateTextParticles() {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            
-            // Set canvas to image size but cap it for performance if huge
-            const w = 400; 
-            const h = Math.floor(w * (img.height / img.width));
-            
+            const w = 1024;
+            const h = 1024; // Increased height to fit subtitle
             canvas.width = w;
             canvas.height = h;
-            ctx.drawImage(img, 0, 0, w, h);
+
+            // Black background (to treat as empty space)
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, w, h);
+
+            // White text
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
             
+            // Main Title "רשף"
+            ctx.font = 'bold 250px "Courier New", monospace';
+            ctx.fillText("רשף", w / 2, h / 2 - 50);
+            
+            // Subtitle "את הנזק סופרים במדרגות"
+            ctx.font = 'bold 60px "Courier New", monospace';
+            ctx.fillText("את הנזק סופרים במדרגות", w / 2, h / 2 + 150);
+
             const imgData = ctx.getImageData(0, 0, w, h);
             const data = imgData.data;
             
-            // Collect valid pixels (bright ones)
             const validPixels = [];
-            for(let y = 0; y < h; y++) {
-                for(let x = 0; x < w; x++) {
+            for(let y = 0; y < h; y += 2) { // Skip pixels for performance/density control
+                for(let x = 0; x < w; x += 2) {
                     const index = (y * w + x) * 4;
-                    const r = data[index];
-                    const g = data[index+1];
-                    const b = data[index+2];
-                    const brightness = (r + g + b) / 3;
-                    
-                    if(brightness > 50) { // Threshold for bright pixels
-                        // Normalize coordinates to -1 to 1 range
+                    // Check red channel (since it's white text on black bg)
+                    if(data[index] > 128) { 
+                        // Normalize to -1 to 1
                         const nX = (x / w) * 2 - 1;
-                        const nY = -((y / h) * 2 - 1); // Flip Y
+                        const nY = -((y / h) * 2 - 1); 
                         validPixels.push({x: nX, y: nY});
                     }
                 }
             }
 
-            // Map particles to valid pixels
-            // If fewer pixels than particles, repeat pixels
-            // If fewer particles, some pixels wont be shown
+            // Update particle positions
             for(let i = 0; i < CONFIG.particleCount; i++) {
-                const pixel = validPixels[i % validPixels.length];
-                // Scale up to scene size
-                logoPositions[i * 3] = pixel.x * 4.0; 
-                logoPositions[i * 3 + 1] = pixel.y * 4.0 * (h/w); // Maintain aspect ratio
-                logoPositions[i * 3 + 2] = 0; // Flat 2D image in 3D space
+                if (validPixels.length > 0) {
+                    const pixel = validPixels[i % validPixels.length];
+                    logoPositions[i * 3] = pixel.x * 6.0; // Scale width
+                    logoPositions[i * 3 + 1] = pixel.y * 6.0; // Scale height (matched to width ratio roughly)
+                    logoPositions[i * 3 + 2] = 0; 
+                } else {
+                    logoPositions[i * 3] = 0;
+                    logoPositions[i * 3 + 1] = 0;
+                    logoPositions[i * 3 + 2] = 0;
+                }
             }
-
             geometry.attributes.aLogoPos.needsUpdate = true;
-            console.log("Logo processed. Valid pixels:", validPixels.length);
-        };
-        img.src = CONFIG.logoURL;
+            console.log("Text generated with subtitle. Points:", validPixels.length);
+        }
+        
+        // Call generation instead of loading image
+        generateTextParticles();
 
 
         // --- POST PROCESSING ---
@@ -878,8 +938,8 @@
         composer.addPass(bloomPass);
 
         // --- EVENTS & INTERACTION ---
-        const mouse = new THREE.Vector2();
-        const targetMouse = new THREE.Vector2();
+        // const mouse = new THREE.Vector2(); // REMOVED to prevent re-declaration
+        // const targetMouse = new THREE.Vector2(); // REMOVED to prevent re-declaration
         const windowHalfX = window.innerWidth / 2;
         const windowHalfY = window.innerHeight / 2;
 
@@ -894,6 +954,17 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             composer.setSize(window.innerWidth, window.innerHeight);
         });
+
+        // Show/Hide Social Links Logic
+        const socialLinks = document.getElementById('social-links');
+        
+        function updateSocialLinks(index) {
+            if (index === 11) {
+                socialLinks.classList.add('visible');
+            } else {
+                socialLinks.classList.remove('visible');
+            }
+        }
 
         function initializeAudio() {
             if (audioInitialized) return;
@@ -912,6 +983,8 @@
         function changeState(index) {
             const state = STATES[index];
             
+            updateSocialLinks(index);
+
             // UI Transition
             const textContainer = document.getElementById('text-content');
             const title = textContainer.querySelector('h1');
@@ -939,16 +1012,15 @@
                     title.textContent = state.title;
                     title.setAttribute('data-text', state.title);
                     p.textContent = state.text;
-                    stateLabel.textContent = state.title; // Use TITLE here to fix the HUD issue
+                    stateLabel.textContent = state.title; 
                     gsap.to(textContainer, { opacity: 1, y: 0, duration: 1 });
                 }
             });
 
             // 3D Transition Logic
-            // Wrap Case: 11 (Logo) -> 0 (Idle)
             if (currentStateIndex === 11 && index === 0) {
                  gsap.to(material.uniforms.uShape, {
-                    value: 12.0, // Shader handles 11->12 as mix(Logo, Stairs)
+                    value: 12.0, 
                     duration: 3,
                     ease: "power2.inOut",
                     onComplete: () => {
@@ -956,7 +1028,6 @@
                     }
                 });
             } else {
-                // Standard Case
                 gsap.to(material.uniforms.uShape, {
                     value: state.shape,
                     duration: 3,
@@ -1016,7 +1087,7 @@
             }
         });
 
-        const clock = new THREE.Clock();
+        // const clock = new THREE.Clock(); // REMOVED to prevent re-declaration
         
         const fpsElem = document.getElementById('fps');
         const tokenElem = document.getElementById('token-count');
@@ -1042,8 +1113,26 @@
             targetMouse.x += (mouse.x - targetMouse.x) * 0.05;
             targetMouse.y += (mouse.y - targetMouse.y) * 0.05;
 
-            particles.rotation.y = time * 0.05;
-            particles.rotation.z = targetMouse.x * 0.2;
+            // AUTO-ALIGNMENT LOGIC for Text States (0 and 11)
+            if (currentStateIndex === 0 || currentStateIndex === 11) {
+               // DAMPEN ROTATION TO 0 (Front View)
+               // Normalize current rotation to -PI to PI range for shortest path
+               let current = particles.rotation.y % (Math.PI * 2);
+               if (current > Math.PI) current -= Math.PI * 2;
+               if (current < -Math.PI) current += Math.PI * 2;
+               
+               // Smoothly lerp to 0
+               particles.rotation.y = THREE.MathUtils.lerp(current, 0, 0.05);
+               
+               // Also dampen X rotation (tilt) to 0
+               particles.rotation.x = THREE.MathUtils.lerp(particles.rotation.x, 0, 0.05);
+            } else {
+               // Standard slow spin for other states
+               particles.rotation.y += 0.002;
+               
+               // Allow mouse tilt on Z axis for standard view
+               particles.rotation.z = targetMouse.x * 0.2;
+            }
 
             material.uniforms.uTime.value = time;
             material.uniforms.uMouse.value = targetMouse;
