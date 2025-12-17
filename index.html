@@ -292,9 +292,9 @@
             <a href="https://www.youtube.com/@resheftr" target="_blank" class="social-icon" title="YouTube">
                 <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.498-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
             </a>
-            <a href="https://music.apple.com/us/artist/%D7%A8%D7%A9%D7%A3/1818649072" target="_blank" class="social-icon" title="Apple Music">
-                <!-- Updated Apple Music Logo (Note in Circle) -->
-                <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm3.563 6.458l-.208.042-4.708 1.021-.23.042c-.229.063-.396.25-.396.479v6.979c-.396-.188-.854-.292-1.333-.292-1.542 0-2.792 1.25-2.792 2.792s1.25 2.792 2.792 2.792c1.542 0 2.792-1.25 2.792-2.792v-5.917l3.521-.75v3.833c-.396-.188-.854-.292-1.333-.292-1.542 0-2.792 1.25-2.792 2.792s1.25 2.792 2.792 2.792c1.542 0 2.792-1.25 2.792-2.792V6.917c0-.292-.25-.5-.521-.459z"/></svg>
+            <a href="https://music.apple.com/us/artist/%D7%A8%D7%A9%D7%A3/1818649072" target="_blank" class="social-icon" title="iTunes">
+                <!-- iTunes / Music Note Logo -->
+                <svg viewBox="0 0 24 24"><path d="M19.5,4H19l-7.3,1.5C11.3,5.6,11,6,11,6.4v9.8c-0.5-0.3-1-0.4-1.6-0.4c-1.9,0-3.4,1.5-3.4,3.4S7.5,22.6,9.4,22.6 s3.4-1.5,3.4-3.4V9.3l5.5-1.1v7.6c-0.5-0.3-1-0.4-1.6-0.4c-1.9,0-3.4,1.5-3.4,3.4s1.5,3.4,3.4,3.4s3.4-1.5,3.4-3.4V4.4 C20.1,4.2,19.8,4,19.5,4z"/></svg>
             </a>
         </div>
 
@@ -318,7 +318,6 @@
     </div>
 
     <!-- AUDIO ELEMENTS -->
-    <!-- IDLE (0) and LOGO (11) are SILENT -->
     <audio id="audio-state-1" src="audio_feed.mp3" loop preload="auto"></audio>
     <audio id="audio-state-2" src="audio_portrait.mp3" loop preload="auto"></audio> 
     <audio id="audio-state-3" src="audio_connection.mp3" loop preload="auto"></audio>
@@ -330,11 +329,8 @@
     <audio id="audio-state-9" src="audio_dibuk.mp3" loop preload="auto"></audio>
     <audio id="audio-state-10" src="audio_time.mp3" loop preload="auto"></audio>
 
-
     <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
-    <!-- Post Processing Dependencies (ORDER MATTERS) -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/Pass.js"></script> 
@@ -342,8 +338,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
-    
-    <!-- GSAP --><script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
     <script>
     window.onload = function() {
@@ -466,11 +461,12 @@
         // --- AUDIO SETUP ---
         const audioElements = [];
         for(let i=0; i<=11; i++) {
+            // Check if element exists before adding (since 0 and 11 are gone)
             const el = document.getElementById(`audio-state-${i}`);
             if(el) {
-                audioElements[i] = el; 
+                audioElements[i] = el; // Maintain index position
             } else {
-                audioElements[i] = null; 
+                audioElements[i] = null; // Placeholder for 0 and 11
             }
         }
 
@@ -495,6 +491,7 @@
             attribute float aRandom;
             attribute vec3 aRandomVec;
             attribute vec3 aLogoPos; 
+            attribute vec3 aLogoPosFinal; // Second layout
             
             varying vec3 vColor;
             varying float vDist;
@@ -564,11 +561,14 @@
             void main() {
                 vec3 pos = position;
                 
+                // Slide 0 Logo Layout
                 vec3 posLogo = aLogoPos;
                 posLogo.y += sin(uTime * 0.5 + aRandom * 10.0) * 0.1;
                 
-                vec3 posLogoFinal = posLogo; 
-                
+                // Slide 11 Logo Layout (Separate attribute)
+                vec3 posLogoFinal = aLogoPosFinal;
+                posLogoFinal.y += sin(uTime * 0.5 + aRandom * 10.0) * 0.1;
+
                 // FINISH LINE 
                 vec3 posFinishLine;
                 if (aRandom < 0.15) {
@@ -762,15 +762,16 @@
                 // --- COMPOSITE SHAPE FOR SLIDE 0 ---
                 vec3 posComposite;
                 // SLIDE 0 LOGIC:
-                // Use aLogoPos for text content.
-                // aLogoPos contains packed data from 2 images:
-                // y > 0 is Top Image (Reshef)
-                // y < 0 is Bottom Image (Subtitle)
-                
                 if (aRandom > 0.7) { 
                     // 30% particles form the text/logo
-                    posComposite = posLogo; 
-                    // The JS generation already scales and positions them correctly
+                    vec3 p = posLogo;
+                    if (p.y < -0.1) {
+                         p *= 1.2; // Scale UP bottom text
+                    }
+                    posComposite = p * 1.4; // Scaled 1.4
+                    posComposite.y += 0.5;
+                    posComposite.z += 0.0; // Reset Z offset to avoid clipping/proximity issues
+                    posComposite = rotateX(-0.1) * posComposite;
                 } else { 
                     // 70% particles form the stairs
                     posComposite = posStairs;
@@ -783,28 +784,18 @@
                 vec3 finalPos = pos;
                 float t = uShape;
                 
-                // 0: IDLE(Composite) -> 1: FEED(Fruit Rain)
                 if (t < 1.0) finalPos = mix(posComposite, posPlate, t);
-                // 1: FEED(Fruit Rain) -> 2: FUELING(City)
                 else if (t < 2.0) finalPos = mix(posPlate, posFuel, t - 1.0);
-                // 2: FUELING(City) -> 3: CONNECTION(Cube)
                 else if (t < 3.0) finalPos = mix(posFuel, posCube, t - 2.0);
-                // 3: CONNECTION(Cube) -> 4: IDLE(Snake)
                 else if (t < 4.0) finalPos = mix(posCube, posSnake, t - 3.0);
-                // 4: IDLE(Snake) -> 5: DAMAGE(Stairs)
                 else if (t < 5.0) finalPos = mix(posSnake, posStairs, t - 4.0);
-                // 5: DAMAGE(Stairs) -> 6: HALLUCINATION(Fireworks)
-                else if (t < 6.0) finalPos = mix(posStairs, posFireworks, t - 5.0); // FIREWORKS
-                // 6: HALLUCINATION(Fireworks) -> 7: PROCESSING(Equalizer)
-                else if (t < 7.0) finalPos = mix(posFireworks, posEqualizer, t - 6.0); // FIREWORKS
-                // 7: PROCESSING(Equalizer) -> 8: NOSTALGIA(BlackHole)
+                else if (t < 6.0) finalPos = mix(posStairs, posFireworks, t - 5.0);
+                else if (t < 7.0) finalPos = mix(posFireworks, posEqualizer, t - 6.0);
                 else if (t < 8.0) finalPos = mix(posEqualizer, posBlackHole, t - 7.0);
-                // 8: NOSTALGIA(BlackHole) -> 9: DIBUK(Tree)
                 else if (t < 9.0) finalPos = mix(posBlackHole, posTree, t - 8.0);
-                // 9: DIBUK(Tree) -> 10: TIME(Hourglass)
                 else if (t < 10.0) finalPos = mix(posTree, posHourglass, t - 9.0);
                 
-                // 10: TIME -> 11: LOGO
+                // 10: TIME -> 11: LOGO (COMPLEX SCENE)
                 else if (t < 11.0) {
                     float p = t - 10.0;
                     if (p < 0.5) {
@@ -823,7 +814,15 @@
                 else finalPos = mix(posLogoFinal, posComposite, t - 11.0);
 
                 float noiseVal = snoise(finalPos * 0.5 + uTime * 0.2);
-                finalPos += normal * noiseVal * uDistortion;
+                
+                // REDUCED DISTORTION FOR SUBTITLE (Slide 0)
+                float currentDistortion = uDistortion;
+                bool isSlideZero = (uShape < 0.5 || uShape > 11.5);
+                if (isSlideZero && aRandom > 0.7 && aLogoPos.y < -0.1) {
+                     currentDistortion *= 0.2; 
+                }
+
+                finalPos += normal * noiseVal * currentDistortion;
                 
                 float d = distance(finalPos.xy, uMouse * 10.0);
                 if(d < 3.0) {
@@ -839,17 +838,30 @@
                 vec3 cVar = mix(vec3(0.2), vec3(1.0), aRandom);
 
                 // Slide 0 Logic
-                bool isSlideZero = (uShape < 0.5 || uShape > 11.5);
                 if (isSlideZero && aRandom > 0.7) {
                    cVar = vec3(0.15); // Dark Grey Text
                 }
-
-                // Slide 11 Logic
+                
+                // STAIRS HIGHLIGHT FOR SLIDE 0
+                if (isSlideZero && aRandom <= 0.7) {
+                     cVar = vec3(0.8); // Brighter Stairs
+                }
+                
+                // --- SLIDE 11 (LOGO) COLOR LOGIC ---
                 bool isSlideEleven = (uShape > 10.5 && uShape < 11.5);
                 if (isSlideEleven) {
-                     if (aLogoPos.y < -0.1) { 
-                         // NO SUBTITLE HIDING ANYMORE - SHOW EVERYTHING!
-                         // gl_PointSize = 0.0; 
+                     if (aRandom < 0.2) {
+                        // Reshef Text: Dark Grey/White
+                        cVar = vec3(0.3);
+                     } else if (aRandom < 0.35) {
+                        // Moon: Bright White/Glow
+                        cVar = vec3(2.0); 
+                     } else if (aRandom < 0.65) {
+                        // Rain: Cyan/Blue tint
+                        cVar = vec3(0.5, 0.8, 1.0);
+                     } else {
+                        // Spiral: Dark Grey
+                        cVar = vec3(0.2);
                      }
                 }
 
@@ -909,6 +921,7 @@
         const randoms = new Float32Array(CONFIG.particleCount);
         const randomVecs = new Float32Array(CONFIG.particleCount * 3);
         const logoPositions = new Float32Array(CONFIG.particleCount * 3); 
+        const logoPositionsFinal = new Float32Array(CONFIG.particleCount * 3); // New Attribute buffer
 
         for (let i = 0; i < CONFIG.particleCount; i++) {
             positions[i * 3] = (Math.random() - 0.5) * 10;
@@ -924,12 +937,17 @@
             logoPositions[i * 3] = 0;
             logoPositions[i * 3 + 1] = 0;
             logoPositions[i * 3 + 2] = 0;
+            
+            logoPositionsFinal[i * 3] = 0;
+            logoPositionsFinal[i * 3 + 1] = 0;
+            logoPositionsFinal[i * 3 + 2] = 0;
         }
 
         geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
         geometry.setAttribute('aRandomVec', new THREE.BufferAttribute(randomVecs, 3));
         geometry.setAttribute('aLogoPos', new THREE.BufferAttribute(logoPositions, 3));
+        geometry.setAttribute('aLogoPosFinal', new THREE.BufferAttribute(logoPositionsFinal, 3));
 
         particles = new THREE.Points(geometry, material);
         scene.add(particles);
@@ -937,66 +955,137 @@
         function generateTextParticles() {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            const w = 2048; 
-            const h = 1024; 
+            const w = 4096; // DOUBLED RESOLUTION for higher density
+            const h = 2048; 
             canvas.width = w;
             canvas.height = h;
 
+            // --- LAYOUT 1: FOR SLIDE 0 ---
+            
             ctx.fillStyle = 'black';
             ctx.fillRect(0, 0, w, h);
-
             ctx.fillStyle = 'white';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             
-            // Generate text manually as fallback if images fail, or primary if requested.
-            // Since user asked for images but got stuck, let's make this look as close as possible to the images.
+            // Main Title "רשף" 
+            // Doubled font size from 250 to 500
+            ctx.font = 'bold 500px "Rubik Dirt", cursive'; 
+            ctx.fillText("רשף", w / 2, h / 2 - 500); // Adjusted Y
             
-            // "Reshef" style - Bold, Big
-            ctx.font = 'bold 300px "Rubik Dirt", cursive'; 
-            ctx.fillText("רשף", w / 2, h / 2 - 150);
+            // Subtitle
+            // Doubled font size from 80 to 160
+            ctx.font = 'bold 160px "Rubik Dirt", cursive'; 
             
-            // "Subtitle" style - Wet Paint
-            ctx.font = 'bold 100px "Rubik Wet Paint", cursive'; 
-            // Draw "את הנזק סופרים במדרגות" in one line but centered
-            ctx.fillText("את הנזק סופרים במדרגות", w / 2, h / 2 + 200);
+            ctx.letterSpacing = "40px"; // Doubled spacing
+            const w1 = ctx.measureText("את").width;
+            ctx.letterSpacing = "100px"; // Doubled
+            const w2 = ctx.measureText("הנזק סופרים").width;
+            
+            const gap = 80; // Doubled
+            const totalW = w1 + gap + w2;
+            const startX = (w - totalW) / 2;
+            
+            ctx.textAlign = 'left';
+            ctx.letterSpacing = "100px";
+            ctx.fillText("הנזק סופרים", startX, h / 2 + 200); // Adjusted Y
+            
+            ctx.letterSpacing = "40px";
+            ctx.fillText("את", startX + w2 + gap, h / 2 + 200);
+
+            ctx.textAlign = 'center';
+            ctx.letterSpacing = "100px";
+            ctx.fillText("במדרגות", w / 2, h / 2 + 440); // Adjusted Y
 
             const imgData = ctx.getImageData(0, 0, w, h);
             const data = imgData.data;
             
-            const validPixels = [];
-            // High density sampling
+            const validPixels0 = [];
+            // Sampling x+=4, y+=4 to handle larger canvas without explosion of points
+            // Actually user wants MORE density. With 4x pixels, stepping by 2 or 3 is good.
+            // Let's use 2 to get high density.
             for(let y = 0; y < h; y += 2) { 
                 for(let x = 0; x < w; x += 2) {
                     const index = (y * w + x) * 4;
                     if(data[index] > 128) { 
                         const nX = (x / w) * 2 - 1;
                         const nY = -((y / h) * 2 - 1); 
-                        validPixels.push({x: nX, y: nY});
+                        validPixels0.push({x: nX, y: nY});
+                    }
+                }
+            }
+            
+            // --- LAYOUT 2: FOR SLIDE 11 ---
+            
+            // Clear canvas
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, w, h);
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center'; // Reset alignment
+            
+            // Title same place
+            ctx.font = 'bold 500px "Rubik Gemstones", cursive'; 
+            ctx.fillText("רשף", w / 2, h / 2 - 100);
+            
+            // Line 1: "את הנזק"
+            ctx.font = 'bold 160px "Rubik Wet Paint", cursive'; 
+            ctx.letterSpacing = "80px";
+            ctx.fillText("את הנזק", w / 2, h / 2 + 200);
+            
+            // Line 2: "סופרים במדרגות"
+            ctx.fillText("סופרים במדרגות", w / 2, h / 2 + 440);
+            
+            const imgData11 = ctx.getImageData(0, 0, w, h);
+            const data11 = imgData11.data;
+            
+            const validPixels11 = [];
+            for(let y = 0; y < h; y += 2) { 
+                for(let x = 0; x < w; x += 2) {
+                    const index = (y * w + x) * 4;
+                    if(data11[index] > 128) { 
+                        const nX = (x / w) * 2 - 1;
+                        const nY = -((y / h) * 2 - 1); 
+                        validPixels11.push({x: nX, y: nY});
                     }
                 }
             }
 
+            // Fill buffers
             for(let i = 0; i < CONFIG.particleCount; i++) {
-                if (validPixels.length > 0) {
-                    const pixel = validPixels[i % validPixels.length];
-                    // Scale to fit screen nicely
-                    logoPositions[i * 3] = pixel.x * 6.5; 
-                    logoPositions[i * 3 + 1] = pixel.y * 3.5; // Aspect ratio fix for text
+                const scatter = 0.05;
+                
+                // Buffer for Slide 0
+                if (validPixels0.length > 0) {
+                    const p0 = validPixels0[i % validPixels0.length];
+                    logoPositions[i * 3] = p0.x * 6.5 + (Math.random() - 0.5) * scatter; 
+                    logoPositions[i * 3 + 1] = p0.y * 3.5 + (Math.random() - 0.5) * scatter; 
                     logoPositions[i * 3 + 2] = 0; 
                 } else {
                     logoPositions[i * 3] = 0;
                     logoPositions[i * 3 + 1] = 0;
                     logoPositions[i * 3 + 2] = 0;
                 }
+                
+                // Buffer for Slide 11
+                if (validPixels11.length > 0) {
+                    const p11 = validPixels11[i % validPixels11.length];
+                    logoPositionsFinal[i * 3] = p11.x * 6.5 + (Math.random() - 0.5) * scatter; 
+                    logoPositionsFinal[i * 3 + 1] = p11.y * 3.5 + (Math.random() - 0.5) * scatter; 
+                    logoPositionsFinal[i * 3 + 2] = 0; 
+                } else {
+                    logoPositionsFinal[i * 3] = 0;
+                    logoPositionsFinal[i * 3 + 1] = 0;
+                    logoPositionsFinal[i * 3 + 2] = 0;
+                }
             }
-            if(geometry && geometry.attributes && geometry.attributes.aLogoPos) {
+            
+            if(geometry && geometry.attributes) {
                 geometry.attributes.aLogoPos.needsUpdate = true;
+                geometry.attributes.aLogoPosFinal.needsUpdate = true;
             }
-            console.log("Generated text particles fallback. Count:", validPixels.length);
+            console.log("Generated dual layout text particles.");
         }
         
-        // Use text generation as robust solution matching request visual
         generateTextParticles();
 
         const renderScene = new THREE.RenderPass(scene, camera);
@@ -1021,8 +1110,6 @@
         });
 
         window.addEventListener('resize', () => {
-            // Update container aspect on resize
-            // We use 100vmin, so it's always square based on smaller dim
             const size = Math.min(window.innerWidth, window.innerHeight);
             renderer.setSize(size, size);
             composer.setSize(size, size);
@@ -1030,7 +1117,6 @@
             camera.updateProjectionMatrix();
         });
         
-        // Initial size
         const size = Math.min(window.innerWidth, window.innerHeight);
         renderer.setSize(size, size);
         composer.setSize(size, size);
@@ -1079,7 +1165,6 @@
             const p = textContainer.querySelector('p');
             const stateLabel = document.getElementById('system-state');
             
-            // Add Playpen font override for middle slides
             if (index > 0 && index < 11) {
                 textContainer.classList.add('playpen-mode');
             } else {
@@ -1139,7 +1224,7 @@
             });
 
             gsap.to(camera.position, {
-                z: 9, // Keeping pulled back zoom for square view
+                z: 9, 
                 duration: 0.2,
                 yoyo: true,
                 repeat: 1,
