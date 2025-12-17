@@ -275,6 +275,12 @@
 
     <!-- MAIN SQUARE CONTAINER -->
     <div id="app-container">
+        
+        <!-- NEW: Background Text for Slide 0 -->
+        <div id="background-text">
+            <span>את הנזק סופרים במדרגות</span>
+        </div>
+
         <div id="canvas-container"></div>
 
         <div id="ui-layer">
@@ -563,11 +569,65 @@
                 
                 // Slide 0 Logo Layout
                 vec3 posLogo = aLogoPos;
-                posLogo.y += sin(uTime * 0.5 + aRandom * 10.0) * 0.1;
+                // Only oscillate if NOT subtitle (y > -0.1)
+                if (aLogoPos.y > -0.1) {
+                    posLogo.y += sin(uTime * 0.5 + aRandom * 10.0) * 0.1;
+                }
                 
-                // Slide 11 Logo Layout (Separate attribute)
-                vec3 posLogoFinal = aLogoPosFinal;
-                posLogoFinal.y += sin(uTime * 0.5 + aRandom * 10.0) * 0.1;
+                // Slide 11 Logo Layout - COMPLEX SCENE
+                vec3 posLogoFinal = vec3(0.0);
+                
+                // --- SLIDE 11 LAYOUT LOGIC ---
+                // We use different particle groups based on aRandom value
+                
+                if (aRandom < 0.3) { // 30% for Reshef
+                    // GROUP A: RESHEF TEXT (Top Center)
+                    // Only use title particles (y > -0.1)
+                    if (aLogoPos.y > -0.1) {
+                         vec3 p = aLogoPos;
+                         p *= 1.5; // Scale 3x relative to old 0.5
+                         p += vec3(0.0, 4.5, -2.0); // Move top center
+                         posLogoFinal = p;
+                    } else {
+                         // Hide subtitle particles
+                         posLogoFinal = vec3(0.0, -100.0, 0.0);
+                    }
+                } 
+                else if (aRandom < 0.45) {
+                    // GROUP B: MOON (Behind Reshef)
+                    vec3 center = vec3(0.0, 5.0, -4.0); // Center, behind text
+                    float radius = 1.2;
+                    // Spread particles more volumetrically to look fluffy/spaced
+                    vec3 spherePoint = normalize(aRandomVec) * (radius + aRandom * 0.5);
+                    spherePoint.z *= 0.2;
+                    posLogoFinal = center + spherePoint;
+                }
+                else if (aRandom < 0.65) {
+                    // GROUP C: RAIN (Falling from Moon)
+                    float fallSpeed = 3.0 + aRandom * 5.0;
+                    float dropHeight = 10.0; 
+                    float spreadX = (aRandom - 0.55) * 4.0; // Spread around 0
+                    float spreadZ = aRandomVec.z * 1.5;
+                    float startY = 4.0;
+                    float currentY = startY - mod(uTime * fallSpeed, dropHeight);
+                    // Curve towards center bottom
+                    float tFall = (startY - currentY) / dropHeight;
+                    // Simply fall straightish or slight curve
+                    float currentX = spreadX * (1.0 - tFall * 0.5);
+
+                    posLogoFinal = vec3(currentX, currentY, -3.0 + spreadZ);
+                }
+                else {
+                    // GROUP D: SPIRAL STAIRS (Bottom Center)
+                    float tSpiral = (aRandom - 0.65) / 0.35; 
+                    float turns = 3.0;
+                    float angle = tSpiral * 6.28 * turns;
+                    float radius = 2.0 + tSpiral * 1.0; 
+                    float x = cos(angle) * radius;
+                    float z = sin(angle) * radius;
+                    float y = -5.0 + tSpiral * 4.0; 
+                    posLogoFinal = vec3(x, y, z);
+                }
 
                 // FINISH LINE 
                 vec3 posFinishLine;
@@ -850,10 +910,10 @@
                 // --- SLIDE 11 (LOGO) COLOR LOGIC ---
                 bool isSlideEleven = (uShape > 10.5 && uShape < 11.5);
                 if (isSlideEleven) {
-                     if (aRandom < 0.2) {
+                     if (aRandom < 0.3) { // Adjusted range to 0.3
                         // Reshef Text: Dark Grey/White
                         cVar = vec3(0.3);
-                     } else if (aRandom < 0.35) {
+                     } else if (aRandom < 0.45) { // Adjusted range
                         // Moon: Bright White/Glow
                         cVar = vec3(2.0); 
                      } else if (aRandom < 0.65) {
@@ -955,7 +1015,7 @@
         function generateTextParticles() {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            const w = 4096; // DOUBLED RESOLUTION for higher density
+            const w = 4096; 
             const h = 2048; 
             canvas.width = w;
             canvas.height = h;
@@ -969,41 +1029,36 @@
             ctx.textBaseline = 'middle';
             
             // Main Title "רשף" 
-            // Doubled font size from 250 to 500
             ctx.font = 'bold 500px "Rubik Dirt", cursive'; 
-            ctx.fillText("רשף", w / 2, h / 2 - 500); // Adjusted Y
+            ctx.fillText("רשף", w / 2, h / 2 - 500); 
             
             // Subtitle
-            // Doubled font size from 80 to 160
             ctx.font = 'bold 160px "Rubik Dirt", cursive'; 
             
-            ctx.letterSpacing = "40px"; // Doubled spacing
+            ctx.letterSpacing = "40px";
             const w1 = ctx.measureText("את").width;
-            ctx.letterSpacing = "100px"; // Doubled
+            ctx.letterSpacing = "100px";
             const w2 = ctx.measureText("הנזק סופרים").width;
             
-            const gap = 80; // Doubled
+            const gap = 80;
             const totalW = w1 + gap + w2;
             const startX = (w - totalW) / 2;
             
             ctx.textAlign = 'left';
             ctx.letterSpacing = "100px";
-            ctx.fillText("הנזק סופרים", startX, h / 2 + 200); // Adjusted Y
+            ctx.fillText("הנזק סופרים", startX, h / 2 + 200); 
             
             ctx.letterSpacing = "40px";
             ctx.fillText("את", startX + w2 + gap, h / 2 + 200);
 
             ctx.textAlign = 'center';
             ctx.letterSpacing = "100px";
-            ctx.fillText("במדרגות", w / 2, h / 2 + 440); // Adjusted Y
+            ctx.fillText("במדרגות", w / 2, h / 2 + 440); 
 
             const imgData = ctx.getImageData(0, 0, w, h);
             const data = imgData.data;
             
             const validPixels0 = [];
-            // Sampling x+=4, y+=4 to handle larger canvas without explosion of points
-            // Actually user wants MORE density. With 4x pixels, stepping by 2 or 3 is good.
-            // Let's use 2 to get high density.
             for(let y = 0; y < h; y += 2) { 
                 for(let x = 0; x < w; x += 2) {
                     const index = (y * w + x) * 4;
@@ -1159,6 +1214,13 @@
             } else {
                 prompt.classList.add('hidden');
             }
+            
+            const backgroundText = document.getElementById('background-text');
+            if (index === 0) {
+                backgroundText.style.opacity = 1;
+            } else {
+                backgroundText.style.opacity = 0;
+            }
 
             const textContainer = document.getElementById('text-content');
             const title = textContainer.querySelector('h1');
@@ -1281,6 +1343,8 @@
         setTimeout(() => {
             document.querySelector('.narrative-container').style.opacity = 1;
             document.querySelector('.narrative-container').style.transform = 'translateY(0)';
+            // Show background text initially for slide 0
+            document.getElementById('background-text').style.opacity = 1;
         }, 500);
 
         function animate() {
