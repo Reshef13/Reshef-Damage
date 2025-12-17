@@ -52,6 +52,35 @@
             height: 100%;
             z-index: 1;
         }
+        
+        /* Background Text Layer */
+        #background-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            display: flex;
+            flex-direction: column; /* Stack vertically */
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+            padding-top: 35vmin; 
+            gap: 2vmin;
+        }
+        
+        #background-text span {
+            font-family: 'Rubik Wet Paint', cursive;
+            font-weight: 700;
+            color: #1a1a1a; 
+            font-size: 8vmin; 
+            white-space: nowrap;
+            letter-spacing: 0px;
+            line-height: 1;
+        }
 
         #ui-layer {
             position: absolute;
@@ -205,7 +234,6 @@
             animation: none;
         }
 
-        /* SOCIAL LINKS STYLES */
         #social-links {
             position: absolute; 
             bottom: 30px; 
@@ -276,9 +304,11 @@
     <!-- MAIN SQUARE CONTAINER -->
     <div id="app-container">
         
-        <!-- NEW: Background Text for Slide 0 -->
+        <!-- Updated Background Text for Slide 0 -->
         <div id="background-text">
-            <span>את הנזק סופרים במדרגות</span>
+            <span>את הנזק</span>
+            <span>סופרים</span>
+            <span>במדרגות</span>
         </div>
 
         <div id="canvas-container"></div>
@@ -299,7 +329,6 @@
                 <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.498-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
             </a>
             <a href="https://music.apple.com/us/artist/%D7%A8%D7%A9%D7%A3/1818649072" target="_blank" class="social-icon" title="iTunes">
-                <!-- iTunes / Music Note Logo -->
                 <svg viewBox="0 0 24 24"><path d="M19.5,4H19l-7.3,1.5C11.3,5.6,11,6,11,6.4v9.8c-0.5-0.3-1-0.4-1.6-0.4c-1.9,0-3.4,1.5-3.4,3.4S7.5,22.6,9.4,22.6 s3.4-1.5,3.4-3.4V9.3l5.5-1.1v7.6c-0.5-0.3-1-0.4-1.6-0.4c-1.9,0-3.4,1.5-3.4,3.4s1.5,3.4,3.4,3.4s3.4-1.5,3.4-3.4V4.4 C20.1,4.2,19.8,4,19.5,4z"/></svg>
             </a>
         </div>
@@ -349,18 +378,11 @@
     <script>
     window.onload = function() {
 
-        // DEFINE GLOBAL VARIABLES AT TOP OF SCOPE
         let particles, material, geometry;
         const mouse = new THREE.Vector2();
         const targetMouse = new THREE.Vector2();
         const clock = new THREE.Clock();
 
-        /**
-         * THE LATENT GHOST
-         * A visualization of AI consciousness.
-         */
-
-        // --- CONFIGURATION ---
         const CONFIG = {
             particleCount: 150000,
             particleSize: 0.02,
@@ -371,92 +393,19 @@
             logoURL: 'BANNER.jpg' 
         };
 
-        // --- STATE MANAGEMENT ---
         const STATES = [
-            { // 0
-                name: "IDLE",
-                title: "", // HIDDEN - Handled by particles
-                text: "",  // HIDDEN - Handled by particles
-                color: new THREE.Vector3(0.4, 0.4, 0.4), // Darker Grey
-                shape: 0.0 // Composite: Stairs + Text
-            },
-            { // 1
-                name: "FEED",
-                title: "תאכיל אותי עוד",
-                text: "על נשמה אפשר לקעקע המון, תן לי אוכל תאכיל אותי עוד", 
-                color: new THREE.Vector3(0.9, 0.9, 0.9), // White/Grey
-                shape: 1.0 // Fruit Ninja Rain
-            },
-            { // 2
-                name: "FUELING",
-                title: "בנזין",
-                text: "אהבה זה משוגע אני ניצוץ ואת שלהבת",
-                color: new THREE.Vector3(0.9, 0.9, 0.9), // White/Grey
-                shape: 2.0 // Falling Star (Shooting Star)
-            },
-            { // 3
-                name: "CONNECTION",
-                title: "עולם אלקטרוני",
-                text: "בעולם אלקטרוני, עדיף לחיות הרמוני, לא כמו טיפוס כמוני, זז אנלוגי",
-                color: new THREE.Vector3(0.9, 0.6, 0.1), // Gold
-                shape: 3.0 // Cube
-            },
-            { // 4
-                name: "IDLE",
-                title: "המרוץ",
-                text: "מדליית זהב שווה הרבה כסף, הרבה כסף לא מרגיש זהב, אולי עדיף לחזור לג'ונגל",
-                color: new THREE.Vector3(0.8, 0.0, 0.0), // Red
-                shape: 4.0 // Giant Snake
-            },
-            { // 5
-                name: "DAMAGE",
-                title: "את הנזק סופרים במדרגות",
-                text: "להיות או לא להיות את הנזק סופרים במדרגות",
-                color: new THREE.Vector3(0.9, 0.9, 0.9), // White/Grey
-                shape: 5.0 // Stairs
-            },
-            { // 6
-                name: "HALLUCINATION",
-                title: "להשתמש ולזרוק",
-                text: "להשתמש ולזרוק, אני לא כזה, כי לכל שטר מקומט, יש פרצוף מעוות.",
-                color: new THREE.Vector3(0.9, 0.9, 0.9), // White/Grey
-                shape: 6.0 // Fireworks
-            },
-            { // 7
-                name: "PROCESSING",
-                title: "אריה",
-                text: "מאחוריי הרעמה הלילה, אם רק תוכלי להאזין, מתחת לשכבות גיטרה, אלו שאגות יללות ודמדומים",
-                color: new THREE.Vector3(0.9, 0.9, 0.9), // White/Grey
-                shape: 7.0 // Equalizer
-            },
-            { // 8
-                name: "NOSTALGIA",
-                title: "נוסטלגיה",
-                text: "מהסדקים ללחוש מתוך מחילה, שתעיר את הנוסטלגיה",
-                color: new THREE.Vector3(1.0, 1.0, 1.0), // White
-                shape: 8.0 // Black Hole
-            },
-            { // 9
-                name: "DIBUK",
-                title: "נפלא הדיבוק קרוב למטה",
-                text: "בלי ללכת לאיבוד אי אפשר למצוא",
-                color: new THREE.Vector3(0.9, 0.9, 0.9), // White/Grey
-                shape: 9.0 // Trees
-            },
-            { // 10
-                name: "TIME",
-                title: "אני והזמן",
-                text: "זאת מכונת שטיפת המוח בטיפול מיוחד כנגדי",
-                color: new THREE.Vector3(0.5, 0.5, 0.5), // Grey
-                shape: 10.0 // Hourglass
-            },
-            { // 11 - NEW LOGO STATE (IMAGE PARTICLES)
-                name: "LOGO",
-                title: "", // Hidden
-                text: "",  // Hidden
-                color: new THREE.Vector3(1.0, 1.0, 1.0), // White
-                shape: 11.0 // Logo Image
-            }
+            { name: "IDLE", title: "", text: "", color: new THREE.Vector3(0.4, 0.4, 0.4), shape: 0.0 },
+            { name: "FEED", title: "תאכיל אותי עוד", text: "על נשמה אפשר לקעקע המון, תן לי אוכל תאכיל אותי עוד", color: new THREE.Vector3(0.9, 0.9, 0.9), shape: 1.0 },
+            { name: "FUELING", title: "בנזין", text: "אהבה זה משוגע אני ניצוץ ואת שלהבת", color: new THREE.Vector3(0.9, 0.9, 0.9), shape: 2.0 },
+            { name: "CONNECTION", title: "עולם אלקטרוני", text: "בעולם אלקטרוני, עדיף לחיות הרמוני, לא כמו טיפוס כמוני, זז אנלוגי", color: new THREE.Vector3(0.9, 0.6, 0.1), shape: 3.0 },
+            { name: "IDLE", title: "המרוץ", text: "מדליית זהב שווה הרבה כסף, הרבה כסף לא מרגיש זהב, אולי עדיף לחזור לג'ונגל", color: new THREE.Vector3(0.8, 0.0, 0.0), shape: 4.0 },
+            { name: "DAMAGE", title: "את הנזק סופרים במדרגות", text: "להיות או לא להיות את הנזק סופרים במדרגות", color: new THREE.Vector3(0.9, 0.9, 0.9), shape: 5.0 },
+            { name: "HALLUCINATION", title: "להשתמש ולזרוק", text: "להשתמש ולזרוק, אני לא כזה, כי לכל שטר מקומט, יש פרצוף מעוות.", color: new THREE.Vector3(0.9, 0.9, 0.9), shape: 6.0 },
+            { name: "PROCESSING", title: "אריה", text: "מאחוריי הרעמה הלילה, אם רק תוכלי להאזין, מתחת לשכבות גיטרה, אלו שאגות יללות ודמדומים", color: new THREE.Vector3(0.9, 0.9, 0.9), shape: 7.0 },
+            { name: "NOSTALGIA", title: "נוסטלגיה", text: "מהסדקים ללחוש מתוך מחילה, שתעיר את הנוסטלגיה", color: new THREE.Vector3(1.0, 1.0, 1.0), shape: 8.0 },
+            { name: "DIBUK", title: "נפלא הדיבוק קרוב למטה", text: "בלי ללכת לאיבוד אי אפשר למצוא", color: new THREE.Vector3(0.9, 0.9, 0.9), shape: 9.0 },
+            { name: "TIME", title: "אני והזמן", text: "זאת מכונת שטיפת המוח בטיפול מיוחד כנגדי", color: new THREE.Vector3(0.5, 0.5, 0.5), shape: 10.0 },
+            { name: "LOGO", title: "", text: "", color: new THREE.Vector3(1.0, 1.0, 1.0), shape: 11.0 }
         ];
 
         let currentStateIndex = 0;
@@ -464,19 +413,16 @@
         let previousStateIndex = 0; 
         let audioInitialized = false; 
 
-        // --- AUDIO SETUP ---
         const audioElements = [];
         for(let i=0; i<=11; i++) {
-            // Check if element exists before adding (since 0 and 11 are gone)
             const el = document.getElementById(`audio-state-${i}`);
             if(el) {
-                audioElements[i] = el; // Maintain index position
+                audioElements[i] = el; 
             } else {
-                audioElements[i] = null; // Placeholder for 0 and 11
+                audioElements[i] = null; 
             }
         }
 
-        // --- SCENE SETUP ---
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x000000, 0.002);
@@ -487,7 +433,6 @@
         const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance" });
         container.appendChild(renderer.domElement);
 
-        // --- SHADERS ---
         const vertexShader = `
             uniform float uTime;
             uniform float uShape; 
@@ -570,7 +515,8 @@
                 // Slide 0 Logo Layout
                 vec3 posLogo = aLogoPos;
                 // Only oscillate if NOT subtitle (y > -0.1)
-                if (aLogoPos.y > -0.1) {
+                // THRESHOLD CHANGED TO 0.15 to better separate "Reshef" from "Et Hanezek..."
+                if (aLogoPos.y > 0.15) {
                     posLogo.y += sin(uTime * 0.5 + aRandom * 10.0) * 0.1;
                 }
                 
@@ -578,44 +524,36 @@
                 vec3 posLogoFinal = vec3(0.0);
                 
                 // --- SLIDE 11 LAYOUT LOGIC ---
-                // We use different particle groups based on aRandom value
-                
                 if (aRandom < 0.3) { // 30% for Reshef
-                    // GROUP A: RESHEF TEXT (Top Center)
-                    // Only use title particles (y > -0.1)
-                    if (aLogoPos.y > -0.1) {
+                    // GROUP A: RESHEF TEXT (Center)
+                    if (aLogoPos.y > 0.15) {
                          vec3 p = aLogoPos;
                          p *= 1.5; // Scale 3x relative to old 0.5
-                         p += vec3(0.0, 4.5, -2.0); // Move top center
+                         // Move to center Y=0.0
+                         p += vec3(0.0, 0.0, -2.0); 
                          posLogoFinal = p;
                     } else {
-                         // Hide subtitle particles
                          posLogoFinal = vec3(0.0, -100.0, 0.0);
                     }
                 } 
                 else if (aRandom < 0.45) {
-                    // GROUP B: MOON (Behind Reshef)
-                    vec3 center = vec3(0.0, 5.0, -4.0); // Center, behind text
+                    // GROUP B: MOON (Behind Reshef, Centered)
+                    vec3 center = vec3(0.0, 0.0, -4.0); // Center
                     float radius = 1.2;
-                    // Spread particles more volumetrically to look fluffy/spaced
                     vec3 spherePoint = normalize(aRandomVec) * (radius + aRandom * 0.5);
                     spherePoint.z *= 0.2;
                     posLogoFinal = center + spherePoint;
                 }
                 else if (aRandom < 0.65) {
-                    // GROUP C: RAIN (Falling from Moon)
+                    // GROUP C: RAIN (Falling from Moon center to spiral)
                     float fallSpeed = 3.0 + aRandom * 5.0;
                     float dropHeight = 10.0; 
-                    float spreadX = (aRandom - 0.55) * 4.0; // Spread around 0
+                    float spreadX = (aRandom - 0.55) * 4.0;
                     float spreadZ = aRandomVec.z * 1.5;
-                    float startY = 4.0;
-                    float currentY = startY - mod(uTime * fallSpeed, dropHeight);
-                    // Curve towards center bottom
-                    float tFall = (startY - currentY) / dropHeight;
-                    // Simply fall straightish or slight curve
-                    float currentX = spreadX * (1.0 - tFall * 0.5);
-
-                    posLogoFinal = vec3(currentX, currentY, -3.0 + spreadZ);
+                    float startY = 0.0; // Start from center
+                    float currentY = startY - mod(uTime * fallSpeed, 5.0); // Fall down 5 units
+                    // Fall straight down or slightly scatter
+                    posLogoFinal = vec3(spreadX * 0.5, currentY, -3.0 + spreadZ);
                 }
                 else {
                     // GROUP D: SPIRAL STAIRS (Bottom Center)
@@ -774,7 +712,7 @@
                 posBlackHole.y = -2.0 / bhRadius;
                 posBlackHole = rotateX(1.0) * posBlackHole;
 
-                // FIREWORKS (Replaces Crumpled Note for Index 6) - MULTIPLE & SLOW
+                // FIREWORKS
                 vec3 posFireworks;
                 float fwSpeed = 0.5;
                 float fwGlobalT = uTime * fwSpeed;
@@ -803,7 +741,7 @@
                     posFireworks = target + pExp;
                 }
 
-                // GIANT SNAKE (Index 4)
+                // GIANT SNAKE
                 vec3 posSnake;
                 float snT = aRandom; 
                 float snLen = 25.0;  
@@ -825,12 +763,12 @@
                 if (aRandom > 0.7) { 
                     // 30% particles form the text/logo
                     vec3 p = posLogo;
-                    if (p.y < -0.1) {
+                    if (p.y < 0.15) { // Updated Threshold for Subtitle
                          p *= 1.2; // Scale UP bottom text
                     }
                     posComposite = p * 1.4; // Scaled 1.4
                     posComposite.y += 0.5;
-                    posComposite.z += 0.0; // Reset Z offset to avoid clipping/proximity issues
+                    posComposite.z += 0.0; // Reset Z offset
                     posComposite = rotateX(-0.1) * posComposite;
                 } else { 
                     // 70% particles form the stairs
@@ -878,7 +816,7 @@
                 // REDUCED DISTORTION FOR SUBTITLE (Slide 0)
                 float currentDistortion = uDistortion;
                 bool isSlideZero = (uShape < 0.5 || uShape > 11.5);
-                if (isSlideZero && aRandom > 0.7 && aLogoPos.y < -0.1) {
+                if (isSlideZero && aRandom > 0.7 && aLogoPos.y < 0.15) {
                      currentDistortion *= 0.2; 
                 }
 
@@ -929,7 +867,8 @@
                 
                 // Flicker Slide 0
                 if (isSlideZero) {
-                    if (aRandom > 0.7 && aLogoPos.y < -0.1) {
+                    // Update threshold to 0.15 here too
+                    if (aRandom > 0.7 && aLogoPos.y < 0.15) {
                         float cycleT = mod(uTime, 5.0);
                         if (cycleT <= 1.0) {
                              float noise = fract(sin(dot(vec2(aRandom, uTime * 15.0), vec2(12.9898, 78.233))) * 43758.5453);
@@ -1035,30 +974,22 @@
             // Subtitle
             ctx.font = 'bold 160px "Rubik Dirt", cursive'; 
             
-            ctx.letterSpacing = "40px";
-            const w1 = ctx.measureText("את").width;
             ctx.letterSpacing = "100px";
-            const w2 = ctx.measureText("הנזק סופרים").width;
             
-            const gap = 80;
-            const totalW = w1 + gap + w2;
-            const startX = (w - totalW) / 2;
-            
-            ctx.textAlign = 'left';
-            ctx.letterSpacing = "100px";
-            ctx.fillText("הנזק סופרים", startX, h / 2 + 200); 
-            
-            ctx.letterSpacing = "40px";
-            ctx.fillText("את", startX + w2 + gap, h / 2 + 200);
+            // Line 1: "את הנזק" - Higher up and centered
+            ctx.fillText("את הנזק", w / 2, h / 2 + 50); 
 
-            ctx.textAlign = 'center';
-            ctx.letterSpacing = "100px";
-            ctx.fillText("במדרגות", w / 2, h / 2 + 440); 
+            // Line 2: "סופרים" - Centered below
+            ctx.fillText("סופרים", w / 2, h / 2 + 250); 
+            
+            // Line 3: "במדרגות" - Centered below
+            ctx.fillText("במדרגות", w / 2, h / 2 + 450); 
 
             const imgData = ctx.getImageData(0, 0, w, h);
             const data = imgData.data;
             
             const validPixels0 = [];
+            // Sampling x+=2, y+=2 for High density
             for(let y = 0; y < h; y += 2) { 
                 for(let x = 0; x < w; x += 2) {
                     const index = (y * w + x) * 4;
@@ -1076,7 +1007,7 @@
             ctx.fillStyle = 'black';
             ctx.fillRect(0, 0, w, h);
             ctx.fillStyle = 'white';
-            ctx.textAlign = 'center'; // Reset alignment
+            ctx.textAlign = 'center'; 
             
             // Title same place
             ctx.font = 'bold 500px "Rubik Gemstones", cursive'; 
