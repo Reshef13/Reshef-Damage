@@ -1,0 +1,423 @@
+:root {
+    --bg-color: #050505;
+    --text-color: #e0e0e0;
+    --accent-color: #00f3ff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Rubik Wet Paint', cursive; 
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#root {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* SQUARE CONTAINER FOR 1:1 ASPECT RATIO */
+#app-container {
+    position: relative;
+    width: 100vmin; 
+    height: 100vmin;
+    background: #000;
+    overflow: hidden;
+    box-shadow: 0 0 50px rgba(0,0,0,0.8);
+}
+
+#canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Background Text Layer */
+#background-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    display: flex;
+    flex-direction: column; 
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1s ease;
+    padding-top: 35vmin; 
+    gap: 2vmin;
+}
+
+#background-text span {
+    font-family: 'Rubik Wet Paint', cursive;
+    font-weight: 700;
+    color: #1a1a1a; 
+    font-size: 8vmin; 
+    white-space: nowrap;
+    letter-spacing: 0px;
+    line-height: 1;
+}
+
+#ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    mix-blend-mode: difference;
+}
+
+.narrative-container {
+    text-align: center;
+    width: 90%; 
+    padding: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1s ease, transform 1s ease;
+}
+
+h1 {
+    font-family: 'Rubik Dirt', cursive; 
+    font-weight: 400; 
+    font-size: 3.5rem; 
+    letter-spacing: 0px; 
+    margin-bottom: 1rem;
+    text-transform: none; 
+    direction: rtl;
+}
+
+p {
+    font-family: 'Rubik Wet Paint', cursive; 
+    font-size: 1.2rem; 
+    line-height: 1.5; 
+    letter-spacing: 0px; 
+    margin-bottom: 1rem;
+    font-weight: 400;
+    direction: rtl;
+}
+
+/* --- OVERRIDE STYLES FOR SLIDES 1-10 (Playpen Sans) --- */
+.playpen-mode h1 {
+    font-family: 'Playpen Sans', cursive !important;
+    font-weight: 400; 
+    font-size: 2.8rem; 
+}
+
+.playpen-mode p {
+    font-family: 'Playpen Sans', cursive !important;
+    font-weight: 100; 
+    font-size: 1.3rem;
+}
+
+.glitch {
+    position: relative;
+}
+
+.glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+}
+
+.glitch::before {
+    color: #ff00c1;
+    z-index: -1;
+    animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+    color: #00fff9;
+    z-index: -2;
+    animation: glitch-anim-2 3s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim-1 {
+    0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, 0); }
+    20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, 0); }
+    40% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 0); }
+    60% { clip-path: inset(80% 0 5% 0); transform: translate(2px, 0); }
+    80% { clip-path: inset(10% 0 70% 0); transform: translate(-2px, 0); }
+    100% { clip-path: inset(30% 0 50% 0); transform: translate(2px, 0); }
+}
+
+@keyframes glitch-anim-2 {
+    0% { clip-path: inset(10% 0 60% 0); transform: translate(2px, 0); }
+    20% { clip-path: inset(80% 0 5% 0); transform: translate(-2px, 0); }
+    40% { clip-path: inset(30% 0 20% 0); transform: translate(2px, 0); }
+    60% { clip-path: inset(10% 0 80% 0); transform: translate(-2px, 0); }
+    80% { clip-path: inset(50% 0 30% 0); transform: translate(2px, 0); }
+    100% { clip-path: inset(70% 0 10% 0); transform: translate(-2px, 0); }
+}
+
+.hud {
+    position: absolute;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'Rubik Wet Paint', cursive; 
+    z-index: 10;
+    pointer-events: none;
+}
+
+.hud-tl { top: 20px; left: 20px; text-align: left; }
+.hud-tr { top: 20px; right: 20px; text-align: right; }
+.hud-bl { bottom: 20px; left: 20px; text-align: left; }
+.hud-br { bottom: 20px; right: 20px; text-align: right; }
+
+.progress-bar {
+    width: 80px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.2);
+    margin-top: 5px;
+    position: relative;
+}
+
+.progress-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: white;
+    width: 0%;
+    transition: width 0.1s;
+}
+
+#interaction-prompt {
+    position: absolute; 
+    bottom: 80px;
+    width: 100%;
+    text-align: center;
+    opacity: 0.5;
+    animation: pulse 2s infinite;
+    pointer-events: none;
+    z-index: 3;
+    font-size: 12px; 
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: 'Rubik Wet Paint', cursive; 
+    transition: opacity 0.5s ease; 
+}
+
+#interaction-prompt.hidden {
+    opacity: 0 !important;
+    animation: none;
+}
+
+#social-links {
+    position: absolute; 
+    bottom: 30px; 
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none; 
+    transition: opacity 1s ease;
+}
+
+#social-links.visible {
+    opacity: 1;
+    pointer-events: auto; 
+}
+
+.social-icon {
+    display: block;
+    width: 30px;
+    height: 30px;
+    transition: transform 0.2s ease, filter 0.2s ease;
+    cursor: pointer;
+}
+
+.social-icon svg {
+    width: 100%;
+    height: 100%;
+    fill: rgba(255, 255, 255, 0.8);
+}
+
+.social-icon:hover {
+    transform: scale(1.2);
+}
+
+.social-icon:hover svg {
+    fill: #ffffff;
+    filter: drop-shadow(0 0 5px #ffffff);
+}
+
+.fullscreen-btn {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    z-index: 50;
+    pointer-events: auto;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(2px);
+}
+
+.fullscreen-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateX(-50%) scale(1.1);
+}
+
+.fullscreen-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.2; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0.2; }
+}
+
+#loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-family: 'Rubik Wet Paint', cursive;
+    transition: opacity 0.5s ease;
+}
+
+/* --- GAME CONTROLS --- */
+#game-ui {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 20px;
+}
+
+.game-controls-mobile {
+    display: grid;
+    grid-template-columns: repeat(3, 60px);
+    grid-template-rows: repeat(2, 60px);
+    gap: 10px;
+    justify-content: center;
+    pointer-events: auto;
+    margin-bottom: 20px;
+}
+
+.dpad-btn {
+    width: 60px;
+    height: 60px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: background 0.1s;
+}
+
+.dpad-btn:active {
+    background: rgba(255,255,255,0.3);
+}
+
+.dpad-btn svg {
+    fill: white;
+    width: 24px;
+    height: 24px;
+}
+
+.dpad-up { grid-column: 2; grid-row: 1; }
+.dpad-left { grid-column: 1; grid-row: 2; }
+.dpad-down { grid-column: 2; grid-row: 2; }
+.dpad-right { grid-column: 3; grid-row: 2; }
+
+.game-header {
+    position: absolute;
+    top: 100px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    pointer-events: auto;
+}
+
+.game-btn {
+    background: transparent;
+    border: 1px solid white;
+    color: white;
+    padding: 8px 16px;
+    font-family: 'Rubik Wet Paint', cursive;
+    cursor: pointer;
+    border-radius: 20px;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.game-btn:hover {
+    background: white;
+    color: black;
+}
+
+/* Hide mobile controls on desktop if desired, but request asked for both */
+@media (min-width: 768px) {
+    .game-controls-mobile {
+        /* Optional: hide on large screens if user prefers keyboard only, 
+           but keeping visible for touch laptops */
+        opacity: 0.3;
+        transition: opacity 0.3s;
+    }
+    .game-controls-mobile:hover {
+        opacity: 1;
+    }
+}
