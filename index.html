@@ -1,1329 +1,257 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reshef - First Album</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- IMPORT ALL FONTS -->
-    <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&family=Rubik+Dirt&family=Rubik+Gemstones&family=Rubik+Wet+Paint&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #050505;
-            --text-color: #e0e0e0;
-            --accent-color: #00f3ff;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Rubik Wet Paint', cursive; 
-            overflow: hidden;
-            width: 100vw;
-            height: 100vh;
-            /* Flex to center the square container */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* SQUARE CONTAINER FOR 1:1 ASPECT RATIO */
-        #app-container {
-            position: relative;
-            width: 100vmin; 
-            height: 100vmin;
-            background: #000;
-            overflow: hidden;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
-        }
-
-        #canvas-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-        
-        /* Background Text Layer */
-        #background-text {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            display: flex;
-            flex-direction: column; /* Stack vertically */
-            justify-content: center;
-            align-items: center;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 1s ease;
-            padding-top: 35vmin; 
-            gap: 2vmin;
-        }
-        
-        #background-text span {
-            font-family: 'Rubik Wet Paint', cursive;
-            font-weight: 700;
-            color: #1a1a1a; 
-            font-size: 8vmin; 
-            white-space: nowrap;
-            letter-spacing: 0px;
-            line-height: 1;
-        }
-
-        #ui-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            pointer-events: none;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            mix-blend-mode: difference;
-        }
-
-        .narrative-container {
-            text-align: center;
-            width: 90%; 
-            padding: 20px;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 1s ease, transform 1s ease;
-        }
-
-        h1 {
-            font-family: 'Rubik Dirt', cursive; 
-            font-weight: 400; 
-            font-size: 3.5rem; 
-            letter-spacing: 0px; 
-            margin-bottom: 1rem;
-            text-transform: none; 
-            direction: rtl;
-        }
-
-        p {
-            font-family: 'Rubik Wet Paint', cursive; 
-            font-size: 1.2rem; 
-            line-height: 1.5; 
-            letter-spacing: 0px; 
-            margin-bottom: 1rem;
-            font-weight: 400;
-            direction: rtl;
-        }
-
-        /* --- OVERRIDE STYLES FOR SLIDES 1-10 (Playpen Sans) --- */
-        .playpen-mode h1 {
-            font-family: 'Playpen Sans', cursive !important;
-            font-weight: 400; 
-            font-size: 2.8rem; 
-        }
-
-        .playpen-mode p {
-            font-family: 'Playpen Sans', cursive !important;
-            font-weight: 100; 
-            font-size: 1.3rem;
-        }
-
-        .glitch {
-            position: relative;
-        }
-
-        .glitch::before, .glitch::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.8;
-        }
-
-        .glitch::before {
-            color: #ff00c1;
-            z-index: -1;
-            animation: glitch-anim-1 2s infinite linear alternate-reverse;
-        }
-
-        .glitch::after {
-            color: #00fff9;
-            z-index: -2;
-            animation: glitch-anim-2 3s infinite linear alternate-reverse;
-        }
-
-        @keyframes glitch-anim-1 {
-            0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, 0); }
-            20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, 0); }
-            40% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 0); }
-            60% { clip-path: inset(80% 0 5% 0); transform: translate(2px, 0); }
-            80% { clip-path: inset(10% 0 70% 0); transform: translate(-2px, 0); }
-            100% { clip-path: inset(30% 0 50% 0); transform: translate(2px, 0); }
-        }
-
-        @keyframes glitch-anim-2 {
-            0% { clip-path: inset(10% 0 60% 0); transform: translate(2px, 0); }
-            20% { clip-path: inset(80% 0 5% 0); transform: translate(-2px, 0); }
-            40% { clip-path: inset(30% 0 20% 0); transform: translate(2px, 0); }
-            60% { clip-path: inset(10% 0 80% 0); transform: translate(-2px, 0); }
-            80% { clip-path: inset(50% 0 30% 0); transform: translate(2px, 0); }
-            100% { clip-path: inset(70% 0 10% 0); transform: translate(-2px, 0); }
-        }
-
-        .hud {
-            position: absolute;
-            font-size: 10px;
-            color: rgba(255, 255, 255, 0.5);
-            font-family: 'Rubik Wet Paint', cursive; 
-        }
-
-        .hud-tl { top: 20px; left: 20px; text-align: left; }
-        .hud-tr { top: 20px; right: 20px; text-align: right; }
-        .hud-bl { bottom: 20px; left: 20px; text-align: left; }
-        .hud-br { bottom: 20px; right: 20px; text-align: right; }
-
-        .progress-bar {
-            width: 80px;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.2);
-            margin-top: 5px;
-            position: relative;
-        }
-        
-        .progress-fill {
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            background: white;
-            width: 0%;
-            transition: width 0.1s;
-        }
-
-        #interaction-prompt {
-            position: absolute; 
-            bottom: 80px;
-            width: 100%;
-            text-align: center;
-            opacity: 0.5;
-            animation: pulse 2s infinite;
-            pointer-events: none;
-            z-index: 3;
-            font-size: 12px; 
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-family: 'Rubik Wet Paint', cursive; 
-            transition: opacity 0.5s ease; 
-        }
-
-        #interaction-prompt.hidden {
-            opacity: 0 !important;
-            animation: none;
-        }
-
-        #social-links {
-            position: absolute; 
-            bottom: 30px; 
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 20px;
-            z-index: 10;
-            opacity: 0;
-            pointer-events: none; 
-            transition: opacity 1s ease;
-        }
-
-        #social-links.visible {
-            opacity: 1;
-            pointer-events: auto; 
-        }
-
-        .social-icon {
-            display: block;
-            width: 30px;
-            height: 30px;
-            transition: transform 0.2s ease, filter 0.2s ease;
-            cursor: pointer;
-        }
-
-        .social-icon svg {
-            width: 100%;
-            height: 100%;
-            fill: rgba(255, 255, 255, 0.8);
-        }
-
-        .social-icon:hover {
-            transform: scale(1.2);
-        }
-
-        .social-icon:hover svg {
-            fill: #ffffff;
-            filter: drop-shadow(0 0 5px #ffffff);
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.2; }
-            50% { opacity: 0.8; }
-            100% { opacity: 0.2; }
-        }
-
-        #loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #000;
-            z-index: 999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-family: 'Rubik Wet Paint', cursive;
-        }
-    </style>
-</head>
-<body>
-
-    <div id="loader">מתדלק 95 בנזין...</div>
-
-    <!-- MAIN SQUARE CONTAINER -->
-    <div id="app-container">
-        
-        <!-- Updated Background Text for Slide 0 -->
-        <div id="background-text">
-            <span>את הנזק</span>
-            <span>סופרים</span>
-            <span>במדרגות</span>
-        </div>
-
-        <div id="canvas-container"></div>
-
-        <div id="ui-layer">
-            <div class="narrative-container" id="text-content">
-                <h1 class="glitch" data-text=""></h1>
-                <p></p>
-            </div>
-        </div>
-
-        <!-- SOCIAL LINKS CONTAINER -->
-        <div id="social-links">
-            <a href="https://open.spotify.com/artist/1AY806UcdOkF9pizbtZ1BM?si=GYdvWezBTi21zAsGovT4rQ" target="_blank" class="social-icon" title="Spotify">
-                <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.4-1.02 15.96 1.681.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-            </a>
-            <a href="https://www.youtube.com/@resheftr" target="_blank" class="social-icon" title="YouTube">
-                <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.498-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-            </a>
-            <a href="https://music.apple.com/us/artist/%D7%A8%D7%A9%D7%A3/1818649072" target="_blank" class="social-icon" title="iTunes">
-                <svg viewBox="0 0 24 24"><path d="M19.5,4H19l-7.3,1.5C11.3,5.6,11,6,11,6.4v9.8c-0.5-0.3-1-0.4-1.6-0.4c-1.9,0-3.4,1.5-3.4,3.4S7.5,22.6,9.4,22.6 s3.4-1.5,3.4-3.4V9.3l5.5-1.1v7.6c-0.5-0.3-1-0.4-1.6-0.4c-1.9,0-3.4,1.5-3.4,3.4s1.5,3.4,3.4,3.4s3.4-1.5,3.4-3.4V4.4 C20.1,4.2,19.8,4,19.5,4z"/></svg>
-            </a>
-        </div>
-
-        <div class="hud hud-tl">
-            SYS.METRIC: <span id="fps">0</span> FPS<br>
-            TOKENS: <span id="token-count">0</span>
-        </div>
-        <div class="hud hud-tr">
-            LATENT SPACE COORDINATES<br>
-            X: <span id="coord-x">0.00</span> Y: <span id="coord-y">0.00</span>
-        </div>
-        <div class="hud hud-bl">
-            MEMORY_ALLOCATION<br>
-            <div class="progress-bar"><div class="progress-fill" id="memory-bar"></div></div>
-        </div>
-        <div class="hud hud-br">
-            STATE: <span id="system-state">רשף</span>
-        </div>
-
-        <div id="interaction-prompt">הקלק להחלפה | הטה ימינה או שמאלה</div>
-    </div>
-
-    <!-- AUDIO ELEMENTS -->
-    <audio id="audio-state-1" src="audio_feed.mp3" loop preload="auto"></audio>
-    <audio id="audio-state-2" src="audio_portrait.mp3" loop preload="auto"></audio> 
-    <audio id="audio-state-3" src="audio_connection.mp3" loop preload="auto"></audio>
-    <audio id="audio-state-4" src="audio_idle.mp3" loop preload="auto"></audio> 
-    <audio id="audio-state-5" src="audio_damage.mp3" loop preload="auto"></audio>
-    <audio id="audio-state-6" src="audio_hallucination.mp3" loop preload="auto"></audio>
-    <audio id="audio-state-7" src="audio_processing.mp3" loop preload="auto"></audio>
-    <audio id="audio-state-8" src="audio_nostalgia.mp3" loop preload="auto"></audio>
-    <audio id="audio-state-9" src="audio_dibuk.mp3" loop preload="auto"></audio>
-    <audio id="audio-state-10" src="audio_time.mp3" loop preload="auto"></audio>
-
-    <!-- Libraries -->
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>רשף - RESHEF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Core Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/Pass.js"></script> 
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+    
+    <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
-    <script>
-    window.onload = function() {
-
-        let particles, material, geometry;
-        const mouse = new THREE.Vector2();
-        const targetMouse = new THREE.Vector2();
-        const clock = new THREE.Clock();
-
-        const CONFIG = {
-            particleCount: 150000,
-            particleSize: 0.02,
-            bloomStrength: 1.5,
-            bloomRadius: 0.4,
-            bloomThreshold: 0.1,
-            camSpeed: 0.05,
-            logoURL: 'BANNER.jpg' 
-        };
-
-        const STATES = [
-            { name: "IDLE", title: "", text: "", color: new THREE.Vector3(0.4, 0.4, 0.4), shape: 0.0 },
-            { name: "FEED", title: "תאכיל אותי עוד", text: "על נשמה אפשר לקעקע המון, תן לי אוכל תאכיל אותי עוד", color: new THREE.Vector3(0.9, 0.9, 0.9), shape: 1.0 },
-            { name: "FUELING", title: "בנזין", text: "אהבה זה משוגע אני ניצוץ ואת שלהבת", color: new THREE.Vector3(0.9, 0.9, 0.9), shape: 2.0 },
-            { name: "CONNECTION", title: "עולם אלקטרוני", text: "בעולם אלקטרוני, עדיף לחיות הרמוני, לא כמו טיפוס כמוני, זז אנלוגי", color: new THREE.Vector3(0.9, 0.6, 0.1), shape: 3.0 },
-            { name: "IDLE", title: "המרוץ", text: "מדליית זהב שווה הרבה כסף, הרבה כסף לא מרגיש זהב, אולי עדיף לחזור לג'ונגל", color: new THREE.Vector3(0.8, 0.0, 0.0), shape: 4.0 },
-            { name: "DAMAGE", title: "את הנזק סופרים במדרגות", text: "להיות או לא להיות את הנזק סופרים במדרגות", color: new THREE.Vector3(0.9, 0.9, 0.9), shape: 5.0 },
-            { name: "HALLUCINATION", title: "להשתמש ולזרוק", text: "להשתמש ולזרוק, אני לא כזה, כי לכל שטר מקומט, יש פרצוף מעוות.", color: new THREE.Vector3(0.9, 0.9, 0.9), shape: 6.0 },
-            { name: "PROCESSING", title: "אריה", text: "מאחוריי הרעמה הלילה, אם רק תוכלי להאזין, מתחת לשכבות גיטרה, אלו שאגות יללות ודמדומים", color: new THREE.Vector3(0.9, 0.9, 0.9), shape: 7.0 },
-            { name: "NOSTALGIA", title: "נוסטלגיה", text: "מהסדקים ללחוש מתוך מחילה, שתעיר את הנוסטלגיה", color: new THREE.Vector3(1.0, 1.0, 1.0), shape: 8.0 },
-            { name: "DIBUK", title: "נפלא הדיבוק קרוב למטה", text: "בלי ללכת לאיבוד אי אפשר למצוא", color: new THREE.Vector3(0.9, 0.9, 0.9), shape: 9.0 },
-            { name: "TIME", title: "אני והזמן", text: "זאת מכונת שטיפת המוח בטיפול מיוחד כנגדי", color: new THREE.Vector3(0.5, 0.5, 0.5), shape: 10.0 },
-            { name: "LOGO", title: "", text: "", color: new THREE.Vector3(1.0, 1.0, 1.0), shape: 11.0 }
-        ];
-
-        let currentStateIndex = 0;
-        let targetStateIndex = 0;
-        let previousStateIndex = 0; 
-        let audioInitialized = false; 
-
-        const audioElements = [];
-        for(let i=0; i<=11; i++) {
-            const el = document.getElementById(`audio-state-${i}`);
-            if(el) {
-                audioElements[i] = el; 
-            } else {
-                audioElements[i] = null; 
-            }
-        }
-
-        const container = document.getElementById('canvas-container');
-        const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x000000, 0.002);
-
-        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.z = 9; 
-
-        const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance" });
-        container.appendChild(renderer.domElement);
-
-        const vertexShader = `
-            uniform float uTime;
-            uniform float uShape; 
-            uniform float uDistortion;
-            uniform vec2 uMouse;
-            
-            attribute float aRandom;
-            attribute vec3 aRandomVec;
-            attribute vec3 aLogoPos; 
-            attribute vec3 aLogoPosFinal; // Second layout
-            
-            varying vec3 vColor;
-            varying float vDist;
-            
-            vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-            vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-            vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
-            vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
-            float snoise(vec3 v) {
-                const vec2 C = vec2(1.0/6.0, 1.0/3.0);
-                const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
-                vec3 i  = floor(v + dot(v, C.yyy) );
-                vec3 x0 = v - i + dot(i, C.xxx) ;
-                vec3 g = step(x0.yzx, x0.xyz);
-                vec3 l = 1.0 - g;
-                vec3 i1 = min( g.xyz, l.zxy );
-                vec3 i2 = max( g.xyz, l.zxy );
-                vec3 x1 = x0 - i1 + C.xxx;
-                vec3 x2 = x0 - i2 + C.yyy;
-                vec3 x3 = x0 - D.yyy;
-                i = mod289(i);
-                vec4 p = permute( permute( permute(
-                        i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
-                        + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
-                        + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
-                float n_ = 0.142857142857;
-                vec3  ns = n_ * D.wyz - D.xzx;
-                vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
-                vec4 x_ = floor(j * ns.z);
-                vec4 y_ = floor(j - 7.0 * x_ );
-                vec4 x = x_ *ns.x + ns.yyyy;
-                vec4 y = y_ *ns.x + ns.yyyy;
-                vec4 h = 1.0 - abs(x) - abs(y);
-                vec4 b0 = vec4( x.xy, y.xy );
-                vec4 b1 = vec4( x.zw, y.zw );
-                vec4 s0 = floor(b0)*2.0 + 1.0;
-                vec4 s1 = floor(b1)*2.0 + 1.0;
-                vec4 sh = -step(h, vec4(0.0));
-                vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
-                vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
-                vec3 p0 = vec3(a0.xy,h.x);
-                vec3 p1 = vec3(a0.zw,h.y);
-                vec3 p2 = vec3(a1.xy,h.z);
-                vec3 p3 = vec3(a1.zw,h.w);
-                vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
-                p0 *= norm.x;
-                p1 *= norm.y;
-                p2 *= norm.z;
-                p3 *= norm.w;
-                vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
-                m = m * m;
-                return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3) ) );
-            }
-
-            mat3 rotateZ(float angle) {
-                float c = cos(angle);
-                float s = sin(angle);
-                return mat3(c, -s, 0.0, s, c, 0.0, 0.0, 0.0, 1.0);
-            }
-
-            mat3 rotateX(float angle) {
-                float c = cos(angle);
-                float s = sin(angle);
-                return mat3(1.0, 0.0, 0.0, 0.0, c, -s, 0.0, s, c);
-            }
-
-            void main() {
-                vec3 pos = position;
-                
-                // Slide 0 Logo Layout
-                vec3 posLogo = aLogoPos;
-                // Only oscillate if NOT subtitle (y > -0.1)
-                // THRESHOLD CHANGED TO 0.15 to better separate "Reshef" from "Et Hanezek..."
-                if (aLogoPos.y > 0.15) {
-                    posLogo.y += sin(uTime * 0.5 + aRandom * 10.0) * 0.1;
-                }
-                
-                // Slide 11 Logo Layout - COMPLEX SCENE
-                vec3 posLogoFinal = vec3(0.0);
-                
-                // --- SLIDE 11 LAYOUT LOGIC ---
-                if (aRandom < 0.3) { // 30% for Reshef
-                    // GROUP A: RESHEF TEXT (Center)
-                    if (aLogoPos.y > 0.15) {
-                         vec3 p = aLogoPos;
-                         p *= 1.5; // Scale 3x relative to old 0.5
-                         // Move to center Y=0.0
-                         p += vec3(0.0, 0.0, -2.0); 
-                         posLogoFinal = p;
-                    } else {
-                         posLogoFinal = vec3(0.0, -100.0, 0.0);
-                    }
-                } 
-                else if (aRandom < 0.45) {
-                    // GROUP B: MOON (Behind Reshef, Centered)
-                    vec3 center = vec3(0.0, 0.0, -4.0); // Center
-                    float radius = 1.2;
-                    vec3 spherePoint = normalize(aRandomVec) * (radius + aRandom * 0.5);
-                    spherePoint.z *= 0.2;
-                    posLogoFinal = center + spherePoint;
-                }
-                else if (aRandom < 0.65) {
-                    // GROUP C: RAIN (Falling from Moon center to spiral)
-                    float fallSpeed = 3.0 + aRandom * 5.0;
-                    float dropHeight = 10.0; 
-                    float spreadX = (aRandom - 0.55) * 4.0;
-                    float spreadZ = aRandomVec.z * 1.5;
-                    float startY = 0.0; // Start from center
-                    float currentY = startY - mod(uTime * fallSpeed, 5.0); // Fall down 5 units
-                    // Fall straight down or slightly scatter
-                    posLogoFinal = vec3(spreadX * 0.5, currentY, -3.0 + spreadZ);
-                }
-                else {
-                    // GROUP D: SPIRAL STAIRS (Bottom Center)
-                    float tSpiral = (aRandom - 0.65) / 0.35; 
-                    float turns = 3.0;
-                    float angle = tSpiral * 6.28 * turns;
-                    float radius = 2.0 + tSpiral * 1.0; 
-                    float x = cos(angle) * radius;
-                    float z = sin(angle) * radius;
-                    float y = -5.0 + tSpiral * 4.0; 
-                    posLogoFinal = vec3(x, y, z);
-                }
-
-                // FINISH LINE 
-                vec3 posFinishLine;
-                if (aRandom < 0.15) {
-                    posFinishLine = vec3(-3.0, (aRandomVec.y * 4.0) - 1.0, aRandomVec.z * 0.5);
-                } else if (aRandom < 0.30) {
-                    posFinishLine = vec3(3.0, (aRandomVec.y * 4.0) - 1.0, aRandomVec.z * 0.5);
-                } else if (aRandom < 0.6) {
-                    posFinishLine = vec3(aRandomVec.x * 3.5, 2.5 + aRandomVec.y * 0.8, aRandomVec.z * 0.5);
-                } else {
-                    posFinishLine = vec3(pos.x, -3.0, pos.z * 0.2);
-                }
-                
-                // STAIRS
-                float stepLength = 2.0;
-                float stepHeight = 1.0;
-                float treadRatio = 0.8;
-                float stepIndex = floor(pos.x / stepLength);
-                float treadX = pos.x;
-                float treadY = stepIndex * stepHeight;
-                float treadZ = pos.z * 2.0;
-                vec3 posTread = vec3(treadX, treadY, treadZ);
-                float riserX = (stepIndex + 1.0) * stepLength;
-                float riserY = (stepIndex * stepHeight) + ((aRandomVec.y + 0.5)) * stepHeight;
-                float riserZ = pos.z * 2.0;
-                vec3 posRiser = vec3(riserX, riserY, riserZ);
-                float onRiser = step(treadRatio, aRandom);
-                vec3 posStairs = mix(posTread, posRiser, onRiser);
-                posStairs -= vec3(0.0, 5.0, 0.0);
-                posStairs *= 0.7;
-                
-                // CUBE
-                vec3 posCube = floor(pos * 1.5) + 0.5;
-
-                // FUEL
-                vec3 posFuel;
-                float starSpeed = 8.0;
-                float pathPos = mod(uTime * starSpeed, 40.0) - 20.0;
-                vec3 dir = normalize(vec3(1.5, -0.8, 0.5));
-                vec3 headPos = dir * pathPos;
-                if (aRandom < 0.05) {
-                    vec3 local = normalize(aRandomVec) * (aRandom * 0.5);
-                    posFuel = headPos + local;
-                } else {
-                    float t = (aRandom - 0.05) / 0.95;
-                    t = pow(t, 0.5); 
-                    float tailLen = 15.0;
-                    vec3 tailBase = headPos - (dir * t * tailLen);
-                    float spread = t * 1.5;
-                    vec3 noise = aRandomVec; 
-                    noise.y += sin(t * 10.0 - uTime * 5.0) * 0.5;
-                    posFuel = tailBase + noise * spread;
-                }
-
-                // FRUIT NINJA RAIN
-                vec3 posPlate; 
-                float rainType = aRandom; 
-                if (rainType < 0.8) {
-                    float fruitID = floor(aRandom * 100.0);
-                    float fRand = fract(fruitID * 13.37);
-                    float fallSpeed = 3.0 + fRand * 4.0;
-                    float timeOffset = fRand * 100.0;
-                    float y = 6.0 - mod(uTime * fallSpeed + timeOffset, 12.0);
-                    float x = (fRand - 0.5) * 10.0;
-                    float z = (fract(fRand * 43.21) - 0.5) * 5.0;
-                    vec3 fruitCenter = vec3(x, y, z);
-                    vec3 local = aRandomVec * 0.4;
-                    float spinSpeed = 5.0;
-                    float rotT = uTime * spinSpeed;
-                    mat3 rotFruit = rotateZ(rotT * (fRand - 0.5) * 2.0) * rotateX(rotT * (fRand - 0.5) * 2.0);
-                    posPlate = fruitCenter + (rotFruit * local);
-                } else {
-                    float sliceID = floor(aRandom * 20.0);
-                    float sRand = fract(sliceID * 7.77);
-                    float angle = sRand * 3.14159 * 2.0;
-                    vec3 dir = normalize(vec3(cos(angle), -1.0, sin(angle)));
-                    float speed = 15.0;
-                    float dist = mod(uTime * speed + sRand * 50.0, 20.0);
-                    vec3 start = vec3((sRand - 0.5) * 10.0, 5.0, (fract(sRand*10.0)-0.5)*5.0);
-                    posPlate = start + dir * dist;
-                    if(posPlate.y < -6.0) posPlate.y += 20.0; 
-                }
-
-                // CRUMPLED NOTE
-                vec3 posNote = pos;
-                posNote.y *= 0.05; 
-                posNote.x *= 1.2;
-                float crumpleCycle = (sin(uTime * 1.0) + 1.0) * 0.5;
-                float noteNoise = snoise(pos * 0.8);
-                vec3 center = vec3(0.0);
-                vec3 crumpledState = normalize(posNote) * (length(posNote) * 0.2) + vec3(noteNoise * 0.5);
-                posNote = mix(posNote, crumpledState, crumpleCycle * 0.9);
-                posNote = rotateZ(uTime * 0.1) * rotateX(0.5) * posNote;
-
-
-                // EQUALIZER
-                vec3 posEqualizer;
-                float numBars = 20.0;
-                float barIndex = floor(aRandom * numBars);
-                float xPos = (barIndex / (numBars - 1.0)) * 10.0 - 5.0;
-                float timeFactor = uTime * 5.0 + barIndex * 0.5;
-                float barHeight = abs(sin(timeFactor) * 2.0 + sin(timeFactor * 2.3) * 1.0);
-                barHeight = max(barHeight, 0.2);
-                float yFactor = (aRandomVec.y + 0.5);
-                float yPos = -2.0 + yFactor * barHeight * 2.0; 
-                float zPos = aRandomVec.z * 0.5; 
-                posEqualizer = vec3(xPos, yPos, zPos);
-                posEqualizer = rotateX(-0.2) * posEqualizer;
-                
-                
-                // TREE
-                vec3 posTree = pos;
-                if (aRandom < 0.2) {
-                    posTree.x = (aRandomVec.x * 0.5);
-                    posTree.z = (aRandomVec.z * 0.5);
-                    posTree.y = (aRandom * 6.0) - 3.0; 
-                } else {
-                    vec3 spherePos = normalize(aRandomVec) * 2.5;
-                    posTree = spherePos + vec3(0.0, 2.0, 0.0);
-                }
-
-                // HOURGLASS
-                vec3 posHourglass = pos;
-                float hgH = pos.y * 2.0; 
-                float hgR = abs(hgH) * 0.8 + 0.2; 
-                float currentR = length(pos.xz);
-                float hgAngle = atan(pos.z, pos.x);
-                posHourglass.x = hgR * cos(hgAngle);
-                posHourglass.z = hgR * sin(hgAngle);
-                if (aRandom < 0.1) {
-                    posHourglass.x = aRandomVec.x * 0.1;
-                    posHourglass.z = aRandomVec.z * 0.1;
-                    float sandFall = fract(uTime * 0.5 + aRandom);
-                    posHourglass.y = 3.0 - (sandFall * 6.0);
-                }
-
-                // BLACK HOLE
-                vec3 posBlackHole;
-                float bhRadius = length(pos.xz) * 2.0 + 1.5; 
-                float bhAngle = atan(pos.z, pos.x);
-                bhAngle += (5.0 / bhRadius) * 2.0 + uTime * 0.5;
-                posBlackHole.x = bhRadius * cos(bhAngle);
-                posBlackHole.z = bhRadius * sin(bhAngle);
-                posBlackHole.y = -2.0 / bhRadius;
-                posBlackHole = rotateX(1.0) * posBlackHole;
-
-                // FIREWORKS
-                vec3 posFireworks;
-                float fwSpeed = 0.5;
-                float fwGlobalT = uTime * fwSpeed;
-                float fwID = floor(aRandom * 5.0); 
-                float fwOffset = fwID * 2.0; 
-                float fwCycle = 6.0; 
-                float tLocal = mod(fwGlobalT + fwOffset, fwCycle);
-                float burstX = sin(fwID * 12.9898) * 7.0; 
-                float burstY = cos(fwID * 78.233) * 2.0 + 2.0; 
-                float burstZ = sin(fwID * 43.72) * 3.0; 
-                vec3 target = vec3(burstX, burstY, burstZ);
-                vec3 start = vec3(burstX, -8.0, burstZ); 
-                if (tLocal < 2.0) {
-                    float p = tLocal / 2.0; 
-                    float y = start.y + (target.y - start.y) * sin(p * 1.57);
-                    vec3 wiggle = vec3(sin(tLocal * 15.0) * 0.1, 0.0, cos(tLocal * 15.0) * 0.1);
-                    vec3 shape = aRandomVec * vec3(0.2, 0.8, 0.2); 
-                    posFireworks = vec3(start.x, y, start.z) + wiggle + shape;
-                } else {
-                    float tExp = tLocal - 2.0;
-                    vec3 dir = normalize(aRandomVec); 
-                    float vel = 3.0 + aRandom * 4.0; 
-                    vec3 pExp = dir * vel * tExp;
-                    pExp *= exp(-tExp * 1.0); 
-                    pExp.y -= 0.8 * tExp * tExp;
-                    posFireworks = target + pExp;
-                }
-
-                // GIANT SNAKE
-                vec3 posSnake;
-                float snT = aRandom; 
-                float snLen = 25.0;  
-                float snX = (snT - 0.5) * snLen; 
-                float snTime = uTime * 2.0; 
-                float snY = sin(snX * 0.4 + snTime) * 2.0 + sin(snX * 1.5 + snTime * 2.0) * 0.5;
-                float snZ = cos(snX * 0.3 + snTime * 0.8) * 3.0;
-                vec3 snSpine = vec3(snX, snY, snZ);
-                vec3 snBody = normalize(aRandomVec) * 0.8; 
-                if (snT > 0.97) snBody *= 2.5; 
-                else if (snT < 0.05) snBody *= 0.2; 
-                posSnake = snSpine + snBody;
-                posSnake = rotateZ(0.2) * rotateX(0.3) * posSnake;
-
-
-                // --- COMPOSITE SHAPE FOR SLIDE 0 ---
-                vec3 posComposite;
-                // SLIDE 0 LOGIC:
-                if (aRandom > 0.7) { 
-                    // 30% particles form the text/logo
-                    vec3 p = posLogo;
-                    if (p.y < 0.15) { // Updated Threshold for Subtitle
-                         p *= 1.2; // Scale UP bottom text
-                    }
-                    posComposite = p * 1.4; // Scaled 1.4
-                    posComposite.y += 0.5;
-                    posComposite.z += 0.0; // Reset Z offset
-                    posComposite = rotateX(-0.1) * posComposite;
-                } else { 
-                    // 70% particles form the stairs
-                    posComposite = posStairs;
-                    posComposite.y -= 1.0; 
-                }
-
-
-                // --- MORPHING LOGIC ---
-                
-                vec3 finalPos = pos;
-                float t = uShape;
-                
-                if (t < 1.0) finalPos = mix(posComposite, posPlate, t);
-                else if (t < 2.0) finalPos = mix(posPlate, posFuel, t - 1.0);
-                else if (t < 3.0) finalPos = mix(posFuel, posCube, t - 2.0);
-                else if (t < 4.0) finalPos = mix(posCube, posSnake, t - 3.0);
-                else if (t < 5.0) finalPos = mix(posSnake, posStairs, t - 4.0);
-                else if (t < 6.0) finalPos = mix(posStairs, posFireworks, t - 5.0);
-                else if (t < 7.0) finalPos = mix(posFireworks, posEqualizer, t - 6.0);
-                else if (t < 8.0) finalPos = mix(posEqualizer, posBlackHole, t - 7.0);
-                else if (t < 9.0) finalPos = mix(posBlackHole, posTree, t - 8.0);
-                else if (t < 10.0) finalPos = mix(posTree, posHourglass, t - 9.0);
-                
-                // 10: TIME -> 11: LOGO (COMPLEX SCENE)
-                else if (t < 11.0) {
-                    float p = t - 10.0;
-                    if (p < 0.5) {
-                        float prog = p / 0.5; 
-                        float easeIn = prog * prog * prog; 
-                        vec3 centerSwirl = vec3(cos(prog*20.0)*5.0*(1.0-easeIn), 0.0, sin(prog*20.0)*5.0*(1.0-easeIn));
-                        finalPos = mix(posHourglass, centerSwirl, easeIn);
-                    } else {
-                        float prog = (p - 0.5) / 0.5; 
-                        float easeOut = 1.0 - pow(1.0 - prog, 5.0);
-                        finalPos = mix(vec3(0.0), posLogoFinal, easeOut);
-                    }
-                }
-                
-                // 11: LOGO -> 0: IDLE
-                else finalPos = mix(posLogoFinal, posComposite, t - 11.0);
-
-                float noiseVal = snoise(finalPos * 0.5 + uTime * 0.2);
-                
-                // REDUCED DISTORTION FOR SUBTITLE (Slide 0)
-                float currentDistortion = uDistortion;
-                bool isSlideZero = (uShape < 0.5 || uShape > 11.5);
-                if (isSlideZero && aRandom > 0.7 && aLogoPos.y < 0.15) {
-                     currentDistortion *= 0.2; 
-                }
-
-                finalPos += normal * noiseVal * currentDistortion;
-                
-                float d = distance(finalPos.xy, uMouse * 10.0);
-                if(d < 3.0) {
-                    finalPos += normal * (3.0 - d) * 0.5 * sin(uTime * 10.0);
-                }
-
-                vec4 mvPosition = modelViewMatrix * vec4(finalPos, 1.0);
-                gl_Position = projectionMatrix * mvPosition;
-                
-                gl_PointSize = (10.0 * aRandom + 2.0) * (1.0 / -mvPosition.z);
-                
-                vDist = distance(finalPos, vec3(0.0));
-                vec3 cVar = mix(vec3(0.2), vec3(1.0), aRandom);
-
-                // Slide 0 Logic
-                if (isSlideZero && aRandom > 0.7) {
-                   cVar = vec3(0.15); // Dark Grey Text
-                }
-                
-                // STAIRS HIGHLIGHT FOR SLIDE 0
-                if (isSlideZero && aRandom <= 0.7) {
-                     cVar = vec3(0.8); // Brighter Stairs
-                }
-                
-                // --- SLIDE 11 (LOGO) COLOR LOGIC ---
-                bool isSlideEleven = (uShape > 10.5 && uShape < 11.5);
-                if (isSlideEleven) {
-                     if (aRandom < 0.3) { // Adjusted range to 0.3
-                        // Reshef Text: Dark Grey/White
-                        cVar = vec3(0.3);
-                     } else if (aRandom < 0.45) { // Adjusted range
-                        // Moon: Bright White/Glow
-                        cVar = vec3(2.0); 
-                     } else if (aRandom < 0.65) {
-                        // Rain: Cyan/Blue tint
-                        cVar = vec3(0.5, 0.8, 1.0);
-                     } else {
-                        // Spiral: Dark Grey
-                        cVar = vec3(0.2);
-                     }
-                }
-
-                vColor = cVar;
-                
-                // Flicker Slide 0
-                if (isSlideZero) {
-                    // Update threshold to 0.15 here too
-                    if (aRandom > 0.7 && aLogoPos.y < 0.15) {
-                        float cycleT = mod(uTime, 5.0);
-                        if (cycleT <= 1.0) {
-                             float noise = fract(sin(dot(vec2(aRandom, uTime * 15.0), vec2(12.9898, 78.233))) * 43758.5453);
-                             float burst = sin(uTime * 2.0);
-                             if (burst > 0.0 && noise < 0.2) gl_PointSize = 0.0;
-                             vColor = vec3(2.0);
-                        }
-                    }
-                }
-            }
-        `;
-
-        const fragmentShader = `
-            uniform vec3 uColor;
-            uniform float uTime;
-            
-            varying vec3 vColor;
-            varying float vDist;
-
-            void main() {
-                vec2 xy = gl_PointCoord.xy - vec2(0.5);
-                float ll = length(xy);
-                if(ll > 0.5) discard;
-
-                float alpha = 1.0 - smoothstep(0.3, 0.5, ll);
-                vec3 finalColor = uColor * vColor;
-                gl_FragColor = vec4(finalColor, alpha * 0.8);
-            }
-        `;
-
-        // --- PARTICLES SYSTEM ---
-        geometry = new THREE.BufferGeometry(); 
-        material = new THREE.ShaderMaterial({ 
-            uniforms: {
-                uTime: { value: 0 },
-                uShape: { value: 0 },
-                uDistortion: { value: 0.5 },
-                uColor: { value: STATES[0].color },
-                uMouse: { value: new THREE.Vector2(0, 0) }
-            },
-            vertexShader: vertexShader,
-            fragmentShader: fragmentShader,
-            transparent: true,
-            depthWrite: false,
-            blending: THREE.AdditiveBlending
-        });
-
-        const positions = new Float32Array(CONFIG.particleCount * 3);
-        const randoms = new Float32Array(CONFIG.particleCount);
-        const randomVecs = new Float32Array(CONFIG.particleCount * 3);
-        const logoPositions = new Float32Array(CONFIG.particleCount * 3); 
-        const logoPositionsFinal = new Float32Array(CONFIG.particleCount * 3); // New Attribute buffer
-
-        for (let i = 0; i < CONFIG.particleCount; i++) {
-            positions[i * 3] = (Math.random() - 0.5) * 10;
-            positions[i * 3 + 1] = (Math.random() - 0.5) * 10;
-            positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
-
-            randoms[i] = Math.random();
-            
-            randomVecs[i * 3] = (Math.random() - 0.5);
-            randomVecs[i * 3 + 1] = (Math.random() - 0.5);
-            randomVecs[i * 3 + 2] = (Math.random() - 0.5);
-
-            logoPositions[i * 3] = 0;
-            logoPositions[i * 3 + 1] = 0;
-            logoPositions[i * 3 + 2] = 0;
-            
-            logoPositionsFinal[i * 3] = 0;
-            logoPositionsFinal[i * 3 + 1] = 0;
-            logoPositionsFinal[i * 3 + 2] = 0;
-        }
-
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
-        geometry.setAttribute('aRandomVec', new THREE.BufferAttribute(randomVecs, 3));
-        geometry.setAttribute('aLogoPos', new THREE.BufferAttribute(logoPositions, 3));
-        geometry.setAttribute('aLogoPosFinal', new THREE.BufferAttribute(logoPositionsFinal, 3));
-
-        particles = new THREE.Points(geometry, material);
-        scene.add(particles);
-
-        function generateTextParticles() {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            const w = 4096; 
-            const h = 2048; 
-            canvas.width = w;
-            canvas.height = h;
-
-            // --- LAYOUT 1: FOR SLIDE 0 ---
-            
-            ctx.fillStyle = 'black';
-            ctx.fillRect(0, 0, w, h);
-            ctx.fillStyle = 'white';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            
-            // Main Title "רשף" 
-            ctx.font = 'bold 500px "Rubik Dirt", cursive'; 
-            ctx.fillText("רשף", w / 2, h / 2 - 500); 
-            
-            // Subtitle
-            ctx.font = 'bold 160px "Rubik Dirt", cursive'; 
-            
-            ctx.letterSpacing = "100px";
-            
-            // Line 1: "את הנזק" - Higher up and centered
-            ctx.fillText("את הנזק", w / 2, h / 2 + 50); 
-
-            // Line 2: "סופרים" - Centered below
-            ctx.fillText("סופרים", w / 2, h / 2 + 250); 
-            
-            // Line 3: "במדרגות" - Centered below
-            ctx.fillText("במדרגות", w / 2, h / 2 + 450); 
-
-            const imgData = ctx.getImageData(0, 0, w, h);
-            const data = imgData.data;
-            
-            const validPixels0 = [];
-            // Sampling x+=2, y+=2 for High density
-            for(let y = 0; y < h; y += 2) { 
-                for(let x = 0; x < w; x += 2) {
-                    const index = (y * w + x) * 4;
-                    if(data[index] > 128) { 
-                        const nX = (x / w) * 2 - 1;
-                        const nY = -((y / h) * 2 - 1); 
-                        validPixels0.push({x: nX, y: nY});
-                    }
-                }
-            }
-            
-            // --- LAYOUT 2: FOR SLIDE 11 ---
-            
-            // Clear canvas
-            ctx.fillStyle = 'black';
-            ctx.fillRect(0, 0, w, h);
-            ctx.fillStyle = 'white';
-            ctx.textAlign = 'center'; 
-            
-            // Title same place
-            ctx.font = 'bold 500px "Rubik Gemstones", cursive'; 
-            ctx.fillText("רשף", w / 2, h / 2 - 100);
-            
-            // Line 1: "את הנזק"
-            ctx.font = 'bold 160px "Rubik Wet Paint", cursive'; 
-            ctx.letterSpacing = "80px";
-            ctx.fillText("את הנזק", w / 2, h / 2 + 200);
-            
-            // Line 2: "סופרים במדרגות"
-            ctx.fillText("סופרים במדרגות", w / 2, h / 2 + 440);
-            
-            const imgData11 = ctx.getImageData(0, 0, w, h);
-            const data11 = imgData11.data;
-            
-            const validPixels11 = [];
-            for(let y = 0; y < h; y += 2) { 
-                for(let x = 0; x < w; x += 2) {
-                    const index = (y * w + x) * 4;
-                    if(data11[index] > 128) { 
-                        const nX = (x / w) * 2 - 1;
-                        const nY = -((y / h) * 2 - 1); 
-                        validPixels11.push({x: nX, y: nY});
-                    }
-                }
-            }
-
-            // Fill buffers
-            for(let i = 0; i < CONFIG.particleCount; i++) {
-                const scatter = 0.05;
-                
-                // Buffer for Slide 0
-                if (validPixels0.length > 0) {
-                    const p0 = validPixels0[i % validPixels0.length];
-                    logoPositions[i * 3] = p0.x * 6.5 + (Math.random() - 0.5) * scatter; 
-                    logoPositions[i * 3 + 1] = p0.y * 3.5 + (Math.random() - 0.5) * scatter; 
-                    logoPositions[i * 3 + 2] = 0; 
-                } else {
-                    logoPositions[i * 3] = 0;
-                    logoPositions[i * 3 + 1] = 0;
-                    logoPositions[i * 3 + 2] = 0;
-                }
-                
-                // Buffer for Slide 11
-                if (validPixels11.length > 0) {
-                    const p11 = validPixels11[i % validPixels11.length];
-                    logoPositionsFinal[i * 3] = p11.x * 6.5 + (Math.random() - 0.5) * scatter; 
-                    logoPositionsFinal[i * 3 + 1] = p11.y * 3.5 + (Math.random() - 0.5) * scatter; 
-                    logoPositionsFinal[i * 3 + 2] = 0; 
-                } else {
-                    logoPositionsFinal[i * 3] = 0;
-                    logoPositionsFinal[i * 3 + 1] = 0;
-                    logoPositionsFinal[i * 3 + 2] = 0;
-                }
-            }
-            
-            if(geometry && geometry.attributes) {
-                geometry.attributes.aLogoPos.needsUpdate = true;
-                geometry.attributes.aLogoPosFinal.needsUpdate = true;
-            }
-            console.log("Generated dual layout text particles.");
-        }
-        
-        generateTextParticles();
-
-        const renderScene = new THREE.RenderPass(scene, camera);
-        
-        const bloomPass = new THREE.UnrealBloomPass(
-            new THREE.Vector2(window.innerWidth, window.innerHeight),
-            CONFIG.bloomStrength,
-            CONFIG.bloomRadius,
-            CONFIG.bloomThreshold
-        );
-
-        const composer = new THREE.EffectComposer(renderer);
-        composer.addPass(renderScene);
-        composer.addPass(bloomPass);
-
-        const windowHalfX = window.innerWidth / 2;
-        const windowHalfY = window.innerHeight / 2;
-
-        document.addEventListener('mousemove', (event) => {
-            mouse.x = (event.clientX - windowHalfX) / windowHalfX;
-            mouse.y = (event.clientY - windowHalfY) / windowHalfY;
-        });
-
-        window.addEventListener('resize', () => {
-            const size = Math.min(window.innerWidth, window.innerHeight);
-            renderer.setSize(size, size);
-            composer.setSize(size, size);
-            camera.aspect = 1; 
-            camera.updateProjectionMatrix();
-        });
-        
-        const size = Math.min(window.innerWidth, window.innerHeight);
-        renderer.setSize(size, size);
-        composer.setSize(size, size);
-        camera.aspect = 1;
-        camera.updateProjectionMatrix();
-
-
-        const socialLinks = document.getElementById('social-links');
-        
-        function updateSocialLinks(index) {
-            if (index === 11) {
-                socialLinks.classList.add('visible');
-            } else {
-                socialLinks.classList.remove('visible');
-            }
-        }
-
-        function initializeAudio() {
-            if (audioInitialized) return;
-            const firstAudio = audioElements[currentStateIndex];
-            if(firstAudio) {
-                firstAudio.play().then(() => {
-                    audioInitialized = true;
-                    console.log("Audio playing: " + firstAudio.src);
-                }).catch(e => {
-                    console.log("Audio awaiting interaction or file not found (Expected in preview).");
-                    audioInitialized = true; 
-                });
-            }
-        }
-
-        function changeState(index) {
-            const state = STATES[index];
-            
-            updateSocialLinks(index);
-
-            const prompt = document.getElementById('interaction-prompt');
-            if (index === 0) {
-                prompt.classList.remove('hidden');
-            } else {
-                prompt.classList.add('hidden');
-            }
-            
-            const backgroundText = document.getElementById('background-text');
-            if (index === 0) {
-                backgroundText.style.opacity = 1;
-            } else {
-                backgroundText.style.opacity = 0;
-            }
-
-            const textContainer = document.getElementById('text-content');
-            const title = textContainer.querySelector('h1');
-            const p = textContainer.querySelector('p');
-            const stateLabel = document.getElementById('system-state');
-            
-            if (index > 0 && index < 11) {
-                textContainer.classList.add('playpen-mode');
-            } else {
-                textContainer.classList.remove('playpen-mode');
-            }
-
-            const prevAudio = audioElements[previousStateIndex];
-            if(prevAudio) {
-                prevAudio.pause();
-                prevAudio.currentTime = 0;
-            }
-            
-            if (index !== 0 && index !== 11) {
-                const newAudio = audioElements[index];
-                if(newAudio) {
-                    newAudio.play().catch(e => {});
-                }
-            }
-            
-            previousStateIndex = index;
-
-            gsap.to(textContainer, {
-                opacity: 0,
-                y: -20,
-                duration: 0.5,
-                onComplete: () => {
-                    title.textContent = state.title;
-                    title.setAttribute('data-text', state.title);
-                    p.textContent = state.text;
-                    stateLabel.textContent = state.title; 
-                    gsap.to(textContainer, { opacity: 1, y: 0, duration: 1 });
-                }
-            });
-
-            if (currentStateIndex === 11 && index === 0) {
-                 gsap.to(material.uniforms.uShape, {
-                    value: 12.0, 
-                    duration: 3,
-                    ease: "power2.inOut",
-                    onComplete: () => {
-                        material.uniforms.uShape.value = 0.0;
-                    }
-                });
-            } else {
-                gsap.to(material.uniforms.uShape, {
-                    value: state.shape,
-                    duration: 3,
-                    ease: "power2.inOut"
-                });
-            }
-
-            gsap.to(material.uniforms.uColor.value, {
-                x: state.color.x,
-                y: state.color.y,
-                z: state.color.z,
-                duration: 2
-            });
-
-            gsap.to(camera.position, {
-                z: 9, 
-                duration: 0.2,
-                yoyo: true,
-                repeat: 1,
-                ease: "power2.in"
-            });
-        }
-
-        document.addEventListener('click', () => {
-            if(!audioInitialized) initializeAudio();
-            
-            targetStateIndex = (currentStateIndex + 1) % STATES.length;
-            currentStateIndex = targetStateIndex;
-            
-            changeState(currentStateIndex);
-            
-            gsap.to(material.uniforms.uDistortion, {
-                value: 3.0,
-                duration: 0.2,
-                yoyo: true,
-                repeat: 1,
-                onComplete: () => {
-                    material.uniforms.uDistortion.value = 0.5;
-                }
-            });
-        });
-
-        let lastScroll = 0;
-        document.addEventListener('wheel', (e) => {
-            if(!audioInitialized) initializeAudio();
-
-            const now = Date.now();
-            if (now - lastScroll > 1000) {
-                lastScroll = now;
-                if (e.deltaY > 0) {
-                    targetStateIndex = (currentStateIndex + 1) % STATES.length;
-                } else {
-                    targetStateIndex = (currentStateIndex - 1 + STATES.length) % STATES.length;
-                }
-                currentStateIndex = targetStateIndex;
-                changeState(currentStateIndex);
-            }
-        });
-
-        const fpsElem = document.getElementById('fps');
-        const tokenElem = document.getElementById('token-count');
-        const coordXElem = document.getElementById('coord-x');
-        const coordYElem = document.getElementById('coord-y');
-        const memBar = document.getElementById('memory-bar');
-        let frameCount = 0;
-        let lastTime = 0;
-        let tokenCounter = 0;
-
-        document.getElementById('loader').style.display = 'none';
-        setTimeout(() => {
-            document.querySelector('.narrative-container').style.opacity = 1;
-            document.querySelector('.narrative-container').style.transform = 'translateY(0)';
-            // Show background text initially for slide 0
-            document.getElementById('background-text').style.opacity = 1;
-        }, 500);
-
-        function animate() {
-            requestAnimationFrame(animate);
-
-            const time = clock.getElapsedTime();
-            const delta = clock.getDelta();
-
-            targetMouse.x += (mouse.x - targetMouse.x) * 0.05;
-            targetMouse.y += (mouse.y - targetMouse.y) * 0.05;
-
-            if (currentStateIndex === 0 || currentStateIndex === 11) {
-               let current = particles.rotation.y % (Math.PI * 2);
-               if (current > Math.PI) current -= Math.PI * 2;
-               if (current < -Math.PI) current += Math.PI * 2;
-               
-               particles.rotation.y = THREE.MathUtils.lerp(current, 0, 0.05);
-               particles.rotation.x = THREE.MathUtils.lerp(particles.rotation.x, 0, 0.05);
-            } else {
-               particles.rotation.y += 0.002;
-               particles.rotation.z = targetMouse.x * 0.2;
-            }
-
-            material.uniforms.uTime.value = time;
-            material.uniforms.uMouse.value = targetMouse;
-
-            camera.position.x += (targetMouse.x * 2 - camera.position.x) * 0.02;
-            camera.position.y += (-targetMouse.y * 2 - camera.position.y) * 0.02;
-            camera.lookAt(scene.position);
-
-            tokenCounter += 1;
-            tokenElem.textContent = tokenCounter;
-            coordXElem.textContent = targetMouse.x.toFixed(2);
-            coordYElem.textContent = targetMouse.y.toFixed(2);
-            memBar.style.width = `${(Math.sin(time) + 1) * 50}%`;
-            
-            frameCount++;
-            if (time - lastTime >= 1) {
-                fpsElem.textContent = frameCount;
-                frameCount = 0;
-                lastTime = time;
-            }
-
-            composer.render();
-        }
-
-        animate();
-    }
-    </script>
+    <!-- Three.js Post-Processing Dependencies (Must be loaded after Three.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Karantina:wght@300;400;700&family=Rubik+Glitch&family=Rubik+Dirt&family=Rubik+Gemstones&family=Rubik+Wet+Paint&family=Rubik:wght@400;700;900&family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+    <style>
+      body {
+        background-color: #050505;
+        color: #e5e5e5;
+        margin: 0;
+        overflow-x: hidden;
+      }
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #111;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #444;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #666;
+      }
+
+      /* Animations */
+      @keyframes scanline {
+        0% { transform: translateY(-100%); }
+        100% { transform: translateY(100%); }
+      }
+      .animate-scanline {
+        animation: scanline 4s linear infinite;
+      }
+
+      @keyframes glitch-skew {
+        0% { transform: skew(0deg); }
+        20% { transform: skew(-2deg); }
+        40% { transform: skew(2deg); }
+        60% { transform: skew(-1deg); }
+        80% { transform: skew(1deg); }
+        100% { transform: skew(0deg); }
+      }
+      .animate-glitch {
+        animation: glitch-skew 1s infinite linear alternate-reverse;
+      }
+
+      @keyframes tv-off {
+        0% { transform: scale(1, 1); opacity: 1; }
+        60% { transform: scale(1, 0.005); }
+        100% { transform: scale(0, 0); opacity: 0; }
+      }
+      .animate-tv-off {
+        animation: tv-off 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+      }
+
+      /* Three.js UI Styles */
+      .hud {
+        position: absolute;
+        padding: 20px;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.7);
+        pointer-events: none;
+        z-index: 10;
+        text-shadow: 0 0 2px black;
+      }
+      .hud-tl { top: 0; left: 0; }
+      .hud-tr { top: 0; right: 0; text-align: right; }
+      .hud-bl { bottom: 0; left: 0; }
+      .hud-br { bottom: 0; right: 0; text-align: right; }
+
+      .narrative-container {
+        position: absolute;
+        bottom: 15%;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        color: white;
+        z-index: 5;
+        pointer-events: none;
+        transition: opacity 0.5s, transform 0.5s;
+        width: 80%;
+      }
+      .narrative-container.playpen-mode {
+         bottom: 5%;
+         transform: translateX(-50%) scale(0.8);
+      }
+      .narrative-container h1 {
+        font-family: 'Karantina', sans-serif;
+        font-size: 4rem;
+        margin: 0;
+        text-shadow: 0 0 10px rgba(255,255,255,0.5);
+      }
+      .narrative-container p {
+        font-family: 'Rubik', sans-serif;
+        font-size: 1.2rem;
+        color: #aaa;
+        margin-top: 10px;
+        background: rgba(0,0,0,0.5);
+        padding: 5px 10px;
+        display: inline-block;
+      }
+      .progress-bar {
+        width: 100px;
+        height: 4px;
+        background: #333;
+        margin-top: 5px;
+        display: inline-block;
+      }
+      .progress-fill {
+        height: 100%;
+        background: #0f0;
+        width: 0%;
+      }
+      #social-links {
+        position: absolute;
+        top: 50%;
+        right: 20px;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        z-index: 20;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.5s;
+      }
+      #social-links.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .social-icon svg {
+        width: 24px;
+        height: 24px;
+        fill: white;
+        transition: fill 0.3s;
+      }
+      .social-icon:hover svg {
+        fill: #f00;
+      }
+      #interaction-prompt {
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        text-align: center;
+        font-family: monospace;
+        font-size: 10px;
+        color: #666;
+        z-index: 5;
+        animation: blink 2s infinite;
+      }
+      @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+      
+      .fullscreen-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 50;
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        opacity: 0.5;
+        transition: opacity 0.3s;
+      }
+      .fullscreen-btn:hover { opacity: 1; }
+      .fullscreen-btn svg { width: 24px; height: 24px; }
+
+      /* Game UI */
+      #game-ui {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 40;
+        text-align: center;
+        pointer-events: none; 
+      }
+      .game-header {
+        pointer-events: auto;
+        margin-bottom: 20px;
+      }
+      .game-btn {
+        background: rgba(0,0,0,0.8);
+        border: 1px solid white;
+        color: white;
+        padding: 10px 20px;
+        font-family: monospace;
+        cursor: pointer;
+        margin: 0 5px;
+      }
+      .game-controls-mobile {
+        display: none; 
+        pointer-events: auto;
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+      }
+      @media (max-width: 768px) {
+        .game-controls-mobile { display: block; }
+      }
+      .dpad-btn {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background: rgba(255,255,255,0.2);
+        border: 1px solid rgba(255,255,255,0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        user-select: none;
+      }
+      .dpad-btn svg { width: 20px; height: 20px; fill: white; }
+      .dpad-up { top: 0; left: 55px; }
+      .dpad-down { bottom: 0; left: 55px; }
+      .dpad-left { top: 55px; left: 0; }
+      .dpad-right { top: 55px; right: 0; }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
 </body>
 </html>
